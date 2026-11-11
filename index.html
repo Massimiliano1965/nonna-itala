@@ -61,7 +61,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .wb .cd{position:absolute;left:0;right:0;top:0;height:0;background:rgba(0,0,0,.6);pointer-events:none}
 .wb:active{transform:scale(.97)}
 </style>
-<style>#bar{padding-bottom:78px}</style></head>
+</head>
 <body>
 <!--CORDOVA-->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -636,19 +636,17 @@ function drawOutdoor(th){
   g=ctx.createLinearGradient(0,0,0,hy);g.addColorStop(0,'#7fc2ee');g.addColorStop(1,'#e3f3fb');
   ctx.fillStyle=g;ctx.fillRect(0,0,W,hy+2);
   var bgi=IMG['bg'+(th===3?2:(th>=4?th-1:th))];
-  if(bgi){var bw0=Math.max(W*1.25,hy*2.05*bgi.width/bgi.height),bh0=bw0*bgi.height/bgi.width;ctx.save();ctx.beginPath();ctx.rect(0,0,W,hy+1);ctx.clip();ctx.drawImage(bgi,cx-bw0/2,hy-bh0*0.5,bw0,bh0);ctx.restore();}
+  if(bgi){var ar0=bgi.width/bgi.height,bw0=Math.max(W*1.25,2.05*Math.max(hy,H-hy)*ar0),bh0=bw0/ar0;ctx.drawImage(bgi,cx-bw0/2,hy-bh0*0.5,bw0,bh0);}
   else{ctx.fillStyle=th===3?'#7fb57f':'#b9c9d8';
   for(i=0;i<9;i++){var bw=W*0.09,bx=cx-W*0.45+i*bw*1.05,bh=H*(0.03+hsh(i+7)*0.05);ctx.fillRect(bx,hy-bh,bw,bh+2);}}
-  ctx.fillStyle='#8f8b86';ctx.fillRect(0,hy,W,H-hy);
+  if(!bgi){ctx.fillStyle='#8f8b86';ctx.fillRect(0,hy,W,H-hy);}
   if(th===0){
     g=ctx.createLinearGradient(0,hy,0,H);g.addColorStop(0,'#a6a29b');g.addColorStop(1,'#d3cfc6');
     flr(-0.62,0.40,ZMIN,ZMAX,0,g);
     flr(0.40,0.45,ZMIN,ZMAX,0,'#eceae3');
-    flr(0.45,1.6,ZMIN,ZMAX,0,'#3d4047');
-    for(k=0;k<40;k++){z=k*10-(d%10);if(z>=ZMIN)flr(0.95,0.98,z,z+4,0,'#e8e8e8');}
   }else if(th===3){
     g=ctx.createLinearGradient(0,hy,0,H);g.addColorStop(0,'#4f9a47');g.addColorStop(1,'#8fcf6a');
-    flr(-1.8,1.8,ZMIN,ZMAX,0,g);
+    if(!bgi)flr(-1.8,1.8,ZMIN,ZMAX,0,g);
     g=ctx.createLinearGradient(0,hy,0,H);g.addColorStop(0,'#c4b183');g.addColorStop(1,'#e8d7ae');
     flr(-0.42,0.42,ZMIN,ZMAX,0,g);
     flr(-0.44,-0.42,ZMIN,ZMAX,0,'#9c8a62');flr(0.42,0.44,ZMIN,ZMAX,0,'#9c8a62');
@@ -664,14 +662,12 @@ function drawOutdoor(th){
   for(k=0;k<40;k++){z=k*5-(d%5);if(z<ZMIN)continue;var a1=P(-0.62,z,0),b1=P(xr,z,0);line(a1,b1,'rgba(0,0,0,0.09)',Math.max(1,2*a1[2]));}
   for(i=-5;i<=5;i++){var xx=i*0.12;if(xx>xr)continue;line(P(xx,ZMIN,0),P(xx,150,0),'rgba(0,0,0,0.06)',1);}
   if(th===0){
-    facade(-0.62,0,true,1.5);
     if(G.door){var dz=G.door.z;flr(-0.62,-0.50,dz-0.5,dz+4.5,0.001,'#b8b2a8');wall(-0.62,dz,dz+4,0,0.56,'#5b3522');wall(-0.62,dz+0.4,dz+3.6,0,0.5,'#7b4a2c');}
-    wall(1.6,ZMIN,ZMAX,0,1.3,'#d8c5ac');
     var kc0=Math.floor(d/30);
     for(k=6;k>=0;k--){
       kk=kc0+k;if(hsh(kk+5)<0.35)continue;
       var zc=kk*30+hsh(kk)*8-d,cc=CARCOL[Math.floor(hsh(kk+1)*CARCOL.length)];
-      if(zc<ZMIN)continue;
+      if(zc<ZMIN||bgi)continue;
       wall(0.60,zc,zc+10,0.02,0.15,cc);wall(0.60,zc+2.5,zc+8,0.15,0.26,cc);wall(0.60,zc+3,zc+7.6,0.16,0.25,'#a6cde6');
       wall(0.60,zc+1,zc+3,0,0.05,'#101010');wall(0.60,zc+7,zc+9,0,0.05,'#101010');
     }
@@ -709,7 +705,7 @@ function drawOutdoor(th){
     }
   }else if(th>=4){
     var DS=th===9?['ombrellone','lettino','ombrellone','salvagente']:th===8?['transenna','cono','transenna']:th===4?['chiosco','palofesta','ruota','palofesta']:(th===7?['palofesta','palofesta']:['cartpend','lampione','lampione']),Hs={chiosco:110,palofesta:150,ruota:200,cartpend:120,lampione:130,transenna:46,cono:42,ombrellone:96,lettino:34,salvagente:36},kd0=Math.floor(d/14),sd2;
-    wall(-0.7,ZMIN,ZMAX,0,0.45,th===7?'#7b5232':(th===9?'#e6d3a3':'#b9a58b'));wall(0.7,ZMIN,ZMAX,0,0.45,th===7?'#7b5232':(th===9?'#e6d3a3':'#b9a58b'));
+    if(!bgi)wall(-0.7,ZMIN,ZMAX,0,0.45,th===7?'#7b5232':(th===9?'#e6d3a3':'#b9a58b'));if(!bgi)wall(0.7,ZMIN,ZMAX,0,0.45,th===7?'#7b5232':(th===9?'#e6d3a3':'#b9a58b'));
     for(k=9;k>=0;k--){
       for(sd2=-1;sd2<=1;sd2+=2){
         kk=kd0+k+(sd2>0?50:0);z=(kd0+k)*14-d+(sd2>0?7:0);if(z<ZMIN)continue;
@@ -718,9 +714,8 @@ function drawOutdoor(th){
       }
     }
   }else{
-    facade(-0.68,20,false,1.4);facade(0.68,40,false,1.4);
     var ks0=Math.floor(d/14),side,j;
-    for(k=7;k>=0;k--){
+    for(k=bgi?-1:7;k>=0;k--){
       for(side=-1;side<=1;side+=2){
         kk=ks0+k;z=kk*14-d+(side>0?7:0);if(z<ZMIN)continue;
         var c1=AWN[(kk+(side>0?2:0))%4];
