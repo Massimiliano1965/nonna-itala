@@ -68,6 +68,35 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .wb small{font-size:10px;opacity:.75}
 .wb .cd{position:absolute;left:0;right:0;top:0;height:0;background:rgba(0,0,0,.6);pointer-events:none}
 .wb:active{transform:scale(.97)}
+
+#pres{position:fixed;inset:0;z-index:9999;background:#2b1a12;color:#fff1d6;display:none;flex-direction:column;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+#pres.on{display:flex}
+#pres .pt{height:6px;background:linear-gradient(90deg,#1f9d55 33.3%,#fffaf0 33.3% 66.6%,#d7263d 66.6%)}
+#pres .sl{flex:1;overflow:auto;padding:18px 18px 8px;display:none;animation:pfade .35s}
+#pres .sl.on{display:block}
+@keyframes pfade{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+#pres h2{color:#ffd23f;font-size:clamp(24px,6.5vw,34px);line-height:1.1;margin:4px 0 12px;font-weight:900}
+#pres h2 small{display:block;color:#ff6b6b;font-size:.55em;margin-top:2px}
+#pres p{font-size:16px;line-height:1.45;margin:6px 0}
+#pres .row{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.07);border-radius:14px;padding:10px 12px;margin:8px 0}
+#pres .row img,#pres .row svg{width:52px;height:52px;object-fit:contain;flex:none}
+#pres .row b{display:block;color:#ffd23f;font-size:16px}
+#pres .row span{font-size:14px;opacity:.92;line-height:1.3}
+#pres .big{display:block;margin:6px auto 14px;width:min(52vw,200px);border-radius:50%;border:5px solid #fff;box-shadow:0 8px 26px rgba(0,0,0,.45)}
+#pres .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+#pres .grid div{border-radius:10px;overflow:hidden;background:#1c110b;font-size:12.5px;font-weight:700;text-align:center;padding-bottom:5px}
+#pres .grid img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:4px}
+#pres .grid i{color:#ffd23f;font-style:normal;margin-right:4px}
+#pres .ft{padding:10px 14px calc(12px + env(safe-area-inset-bottom));background:#1c110b}
+#pres .dots{display:flex;justify-content:center;gap:7px;margin-bottom:9px}
+#pres .dots i{width:8px;height:8px;border-radius:50%;background:#5b4636}
+#pres .dots i.on{background:#ffd23f}
+#pres .nv{display:flex;gap:10px;align-items:center}
+#pres .nv button{flex:1;font:900 17px system-ui;border:0;border-radius:14px;padding:13px 10px;background:#4a3527;color:#fff1d6}
+#pres .nv button.pr{background:#ffd23f;color:#3a2200;box-shadow:0 4px 0 #b88a00}
+#pres label{display:flex;gap:8px;align-items:center;justify-content:center;font-size:14px;margin-top:10px;opacity:.9}
+#pres label input{width:20px;height:20px}
+#presOpen{position:absolute;top:8px;left:8px;z-index:5;background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:12px;padding:8px 12px;font:700 13px system-ui;cursor:pointer}
 </style>
 </head>
 <body>
@@ -271,7 +300,7 @@ function start(){G.score=0;G.spesa=0;G.lost={};G.levelStartScore=0;beginLevel(wi
 function beginLevel(i){
   G.lv=i;G.sk=null;G.skT=0;G.skS=7;
   G.state='intro';G.hearts=3;G.levelKills=0;G.levelStartScore=G.score;G.chain=0;G.chainT=0;G.gx=0;G.gt=0;
-  G.proj=[];G.thieves=[];G.obs=[];G.texts=[];G.parts=[];G.spawnT=1;G.obsT=2.5;G.inv=0;G.slow=0;G.shake=0;G.flash=0;G.swing=null;G.cd=[0,0,0,0,0,0];G.tw=null;G.gw=null;G.gwT=rnd(14,22);showTw();G.winT=0;G.bossOn=false;G.stolen=0;G.lost[i]=[];G.dgs=0;G.dgz=1;G.dgcd=0;G.dgt=null;G.pw=null;G.pwT=rnd(14,24);G.pina=null;G.thSlow=0;G.gino=null;G.gcd=6;G.car=null;G.cop=null;G.ambDone=false;G.carT=rnd(6,10);
+  G.proj=[];G.thieves=[];G.obs=[];G.texts=[];G.parts=[];G.spawnT=1;G.obsT=2.5;G.inv=0;G.slow=0;G.shake=0;G.flash=0;G.swing=null;G.cd=[0,0,0,0,0,0];G.tw=null;G.gw=null;G.gwT=rnd(6,10);showTw();G.winT=0;G.bossOn=false;G.stolen=0;G.lost[i]=[];G.dgs=0;G.dgz=1;G.dgcd=0;G.dgt=null;G.pw=null;G.pwT=rnd(14,24);G.pina=null;G.thSlow=0;G.gino=null;G.gcd=6;G.car=null;G.cop=null;G.ambDone=false;G.carT=rnd(6,10);
   G.purse=true;G.intro={t:i===0?0:1.4,thief:null};G.door=i===0?{z:2}:null;
   if(i===0)G.gx=-1.7;
   $('ov').classList.add('hide');updHearts();updHud();
@@ -290,7 +319,7 @@ function updateIntro(dt){
   if(I.t>=3.2){
     if(!I.thief){
       I.thief={type:0,hp:3,max:3,lx:0.9,tl:0,lt:1.5,z:2.5,base:TT[0].base+(L.base-8),age:0,bt:2,burst:false,flash:0,down:0,dead:false,ph:0};
-      G.purse=false;G.shake=0.3;G.flash=1.1;vib([300,100,300,100,400]);beep(150,0.3,'sawtooth',0.07);shout('I ma robat la borsa!');try{AUD['I ma robat la borsa!'].onended=function(){AUD['I ma robat la borsa!'].onended=null;setTimeout(function(){shout('Scappa');try{AUD['Scappa'].onended=function(){AUD['Scappa'].onended=null;setTimeout(function(){shout('Pòta!');},250);};}catch(e){}},700);};}catch(e){}
+      G.purse=false;G.shake=0.3;G.flash=1.1;vib([300,100,300,100,400]);beep(150,0.3,'sawtooth',0.07);shout('I ma robat la borsa!');try{AUD['I ma robat la borsa!'].onended=function(){AUD['I ma robat la borsa!'].onended=null;setTimeout(function(){shout('Fermil!1');try{AUD['Fermil!1'].onended=function(){AUD['Fermil!1'].onended=null;setTimeout(function(){shout('Pòta!');},250);};}catch(e){}},700);};}catch(e){}
     }
     var th=I.thief;th.ph+=dt*13;th.lx+=(0-th.lx)*Math.min(1,dt*3);th.z+=14*dt;G.dist+=12*dt;
     cap='';
@@ -391,7 +420,7 @@ function hitThief(t,wp,dz){
   beep(wp.snd[0],wp.snd[1],wp.snd[2],0.08);
   if(t.hp<=0){
     t.down=0.001;G.kills++;
-    var bonus=50*mult;G.score+=bonus;
+    var bonus=50*mult;G.score+=bonus;if(Math.random()<0.6)setTimeout(function(){shoutR(['Meno male!1','Meno male!2']);},500);
     addText(p[0],py-H*0.04,'+'+bonus,'#9dffc4',true);
     beep(660,0.1,'square');setTimeout(function(){beep(880,0.15,'square');},90);
     var Lv=LV[G.lv];
@@ -413,12 +442,13 @@ var bubT=0;
 var vocNonna=null;
 function pickVoice(){try{var v=speechSynthesis.getVoices().filter(function(x){return /^it/i.test(x.lang);});vocNonna=v.filter(function(x){return /female|donna|elsa|alice|federica|paola|google/i.test(x.name);})[0]||v[0]||null;}catch(e){}}
 try{if(window.speechSynthesis){speechSynthesis.onvoiceschanged=pickVoice;pickVoice();}}catch(e){}
-var VOCI={'I ma robat la borsa!':'robat','Ciapèl!':'ciapel','Pòta!':'pota','Grasie Pina!':'pina','Grasie Gino!':'gino','Fermes!':'fermes','Fermes, ladèr!':'fermeslader','Scappa':'scappa'},AUD={};
+var VOCI={'I ma robat la borsa!':'robat','Ciapèl!':'ciapel','Pòta!':'pota','Grasie Pina!':'pina','Grasie Gino!':'gino','Fermes!':'fermes','Fermes, ladèr!':'fermeslader','Fermil!1':'fermil1','Fermil!2':'fermil2','Fermil!3':'fermil3','Coi sòlc!1':'coisolc1','Coi sòlc!2':'coisolc2','Meno male!1':'menomale1','Meno male!2':'menomale2'},AUD={};
+function shoutR(l){shout(l[Math.floor(Math.random()*l.length)]);}
 Object.keys(VOCI).forEach(function(k){try{var a=new Audio('audio/'+VOCI[k]+'.mp3');a.preload='auto';AUD[k]=a;}catch(e){}});
 function shout(txt){try{if(soundOn&&AUD[txt]){try{speechSynthesis.cancel();}catch(e){}AUD[txt].currentTime=0;var pr=AUD[txt].play();if(pr&&pr.catch)pr.catch(function(){});return;}}catch(e){}
 
   try{if(soundOn&&window.speechSynthesis){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(txt);u.lang='it-IT';if(vocNonna)u.voice=vocNonna;u.rate=0.9;u.pitch=1.25;u.volume=1;speechSynthesis.speak(u);}}catch(e){}}
-function nonnaGrida(dt){G.shT=(G.shT===undefined?5:G.shT)-dt;if(G.shT<=0){if(G.thieves.some(function(t){return !t.down&&!t.dead;})){var r=Math.random();shout(r<0.5?'Fermes!':'Fermes, ladèr!');}G.shT=8+Math.random()*5;}}
+function nonnaGrida(dt){G.shT=(G.shT===undefined?5:G.shT)-dt;if(G.shT<=0){if(G.thieves.some(function(t){return !t.down&&!t.dead;})){shoutR(['Fermes!','Fermes, ladèr!','Fermil!1','Fermil!2','Fermil!3','Coi sòlc!1','Coi sòlc!2']);}G.shT=8+Math.random()*5;}}
 function sicCane(){
   if(G.state!=='play'||G.dgcd>0||G.dgs!==0)return;
   var c=G.thieves.filter(function(t){return !t.down&&t.z<=56;}).sort(function(a,b){return (b.fleeing?1:0)-(a.fleeing?1:0)||a.z-b.z;})[0];
@@ -502,10 +532,10 @@ function update(dt){
   }
   if(G.tw){G.tw.t-=dt;if(G.tw.t<=0){G.tw=null;if(G.lastW>=3)G.lastW=0;showTw();addText(cx,H*0.3,'Arma finita','#aab');}
     else{var tw0=WP[G.tw.w],hv5=Math.round(G.cd[G.tw.w]/tw0.cd*100);if(cdLast[4]!==hv5){cdLast[4]=hv5;cdEls[4]=cdEls[4]||tb.querySelector('.cd');cdEls[4].style.height=hv5+'%';}var sl=Math.ceil(G.tw.t);if(tb._s!==sl){tb._s=sl;tb.querySelector('small').textContent=sl+' s';}}}
-  if(LV[G.lv].theme!==2&&G.lv>=1){
+  {
     G.gwT-=dt;
-    if(G.gwT<=0&&!G.gw&&!G.tw&&G.winT<=0&&!G.bossOn&&G.state==='play'){G.gw={z:62,lane:[-1,0,1][Math.floor(Math.random()*3)],w:3+Math.floor(Math.random()*3)};G.gwT=rnd(24,38);addText(cx,H*0.28,'Gino: prendi, nonna!','#ffd23f');}
-    if(G.gw){var gq=G.gw;gq.z-=vg*dt;if(gq.z<1.6&&gq.z>-1.6&&Math.abs(gq.lane-G.gx)<0.7){G.tw={w:gq.w,t:15};G.gw=null;showTw();shout('Grasie Gino!');beep(780,0.1,'triangle',0.07);addText(cx,H*0.3,WP[G.tw.w].name+' per 15 secondi!','#7dffb0');}else if(gq.z<-4)G.gw=null;}
+    if(G.gwT<=0&&!G.gw&&!G.tw&&G.winT<=0&&!G.bossOn&&G.state==='play'){G.gw={z:62,lane:(Math.random()<0.65?Math.max(-1,Math.min(1,Math.round(G.gx))):[-1,0,1][Math.floor(Math.random()*3)]),w:3+Math.floor(Math.random()*3)};G.gwT=rnd(18,28);addText(cx,H*0.28,'Gino: prendi, nonna!','#ffd23f');}
+    if(G.gw){var gq=G.gw;gq.z-=vg*dt;if(gq.z<1.6&&gq.z>-1.6&&Math.abs(gq.lane-G.gx)<1.1){G.tw={w:gq.w,t:15};G.gw=null;showTw();shout('Grasie Gino!');beep(780,0.1,'triangle',0.07);addText(cx,H*0.3,WP[G.tw.w].name+' per 15 secondi!','#7dffb0');}else if(gq.z<-4)G.gw=null;}
   }
   var dtR=dt;
   G.thieves.forEach(function(t){var dt=dtT*(t.trip>0?0.28:1);if(t.trip>0)t.trip-=dtR;
@@ -1215,5 +1245,57 @@ requestAnimationFrame(frame);
 window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,speed:1,LV:LV,G:G,attack:attack,start:start,WP:WP,P:P,laneX:laneX};
 })();
 </script>
-</body>
+
+<div id="pres" role="dialog" aria-label="Presentazione">
+ <div class="pt"></div>
+ <div class="sl on"><img class="big" src="img/icona.png" alt="">
+  <h2 style="text-align:center">Nonna Itala<small>Acchiappaladri</small></h2>
+  <p style="text-align:center">La nonnina esce a fare la spesa e un ladro le ruba la borsetta con i soldi di casa. Aiutala a riprendersi il bilancio di famiglia in 10 livelli, dalla strada sotto casa fino alle vacanze al mare.</p>
+  <p style="text-align:center;opacity:.8;font-size:14px">Scorri a destra e sinistra per cambiare corsia. Tocca un'arma per colpire.</p></div>
+ <div class="sl"><h2>Le armi<small>della nonnina</small></h2>
+  <div class="row"><svg viewBox="0 0 48 48"><use href="#i-pan"/></svg><div><b>Pentola</b><span>Corpo a corpo: botta in testa fortissima, ma lenta.</span></div></div>
+  <div class="row"><svg viewBox="0 0 48 48"><use href="#i-slipper"/></svg><div><b>Ciabatta</b><span>Si lancia: rapidissima, ma debole. Più il colpo è lontano, più vale.</span></div></div>
+  <div class="row"><svg viewBox="0 0 48 48"><use href="#i-pin"/></svg><div><b>Mattarello</b><span>Lungo: colpisce anche i ladri più lontani.</span></div></div>
+  <div class="row"><svg viewBox="0 0 48 48"><use href="#i-dog"/></svg><div><b>Cane</b><span>Lo aizzi tu: si lancia sul ladro e lo blocca.</span></div></div></div>
+ <div class="sl"><h2>Chi ti aiuta<small>lungo la strada</small></h2>
+  <div class="row"><img src="img/pina0.png" alt=""><div><b>Pina</b><span>La vicina dal balcone: butta l'acqua sui ladri e li rallenta.</span></div></div>
+  <div class="row"><img src="img/gino0.png" alt=""><div><b>Gino</b><span>Ti lascia un'arma speciale per 15 secondi: passaci sopra per prenderla!</span></div></div>
+  <div class="row"><svg viewBox="0 0 48 48"><use href="#i-ferro"/></svg><div><b>Ferro da stiro</b><span>Danno enorme, ma lentissimo.</span></div></div>
+  <div class="row"><svg viewBox="0 0 48 48"><use href="#i-battipanni"/></svg><div><b>Battipanni</b><span>Lungo e veloce: colpisce tutti i ladri a tiro.</span></div></div>
+  <div class="row"><svg viewBox="0 0 48 48"><use href="#i-scopa"/></svg><div><b>Scopa</b><span>Si lancia e trapassa fino a 3 ladri.</span></div></div>
+  <div class="row"><img src="img/capol.png" alt=""><div><b>Polizia</b><span>Quando passa la volante o il poliziotto, ogni ladro perde il 75% di forza.</span></div></div>
+  <div class="row"><img src="img/amb.png" alt=""><div><b>Ambulanza</b><span>Se hai perso un cuore, ti ridà un cuore.</span></div></div></div>
+ <div class="sl"><h2>Attenzione<small>alla strada</small></h2>
+  <div class="row"><img src="img/ca1.png" alt=""><div><b>Macchine agli incroci</b><span>Se ti prendono perdi un cuore e dici "Pòta!". Cambia corsia in tempo.</span></div></div>
+  <div class="row"><svg viewBox="0 0 48 48"><use href="#i-heart"/></svg><div><b>Tre cuori</b><span>Ogni scippo o urto ne toglie uno. Quando lo schermo diventa rosso e il telefono vibra, il ladro è scappato con la borsa!</span></div></div>
+  <div class="row"><img src="img/pe_spesa.png" alt=""><div><b>Persone di sfondo</b><span>Mercato, parco, Luna Park, spiaggia: la gente non ti intralcia, ma ti guarda correre.</span></div></div>
+  <p style="opacity:.85;font-size:14px">Tre volte ti aspetta il ladro capo: servono più colpi per fermarlo.</p></div>
+ <div class="sl"><h2>10 livelli<small>dalla strada alle vacanze</small></h2>
+  <div class="grid">
+   <div><img src="img/lv1.jpg" alt=""><i>1</i>Sotto casa</div><div><img src="img/lv2.jpg" alt=""><i>2</i>Il mercato</div>
+   <div><img src="img/lv3.jpg" alt=""><i>3</i>Il parco</div><div><img src="img/lv4.jpg" alt=""><i>4</i>La metropolitana</div>
+   <div><img src="img/lv5.jpg" alt=""><i>5</i>Il Luna Park</div><div><img src="img/lv6.jpg" alt=""><i>6</i>La salita</div>
+   <div><img src="img/lv7.jpg" alt=""><i>7</i>La discesa</div><div><img src="img/lv8.jpg" alt=""><i>8</i>Le montagne russe</div>
+   <div><img src="img/lv9.jpg" alt=""><i>9</i>Il cantiere</div><div><img src="img/lv10.jpg" alt=""><i>10</i>In vacanza</div></div></div>
+ <div class="ft"><div class="dots"></div>
+  <div class="nv"><button id="presBack">Indietro</button><button id="presNext" class="pr">Avanti</button></div>
+  <label><input type="checkbox" id="presOff"> Non mostrare più all'avvio</label></div>
+</div>
+<script>
+(function(){
+  var P=document.getElementById('pres'),sl=P.querySelectorAll('.sl'),dots=P.querySelector('.dots'),cur=0,nx=document.getElementById('presNext'),bk=document.getElementById('presBack'),off=document.getElementById('presOff'),tx0=null;
+  sl.forEach(function(){dots.appendChild(document.createElement('i'));});
+  function show(n){cur=Math.max(0,Math.min(sl.length-1,n));sl.forEach(function(e,i){e.classList.toggle('on',i===cur);});dots.querySelectorAll('i').forEach(function(e,i){e.classList.toggle('on',i===cur);});bk.style.visibility=cur?'visible':'hidden';nx.textContent=cur===sl.length-1?'Gioca!':'Avanti';sl[cur].scrollTop=0;}
+  function close(){P.classList.remove('on');try{localStorage.setItem('nonna_pres_off',off.checked?'1':'0');}catch(e){}}
+  window.openPres=function(){try{off.checked=localStorage.getItem('nonna_pres_off')==='1';}catch(e){}show(0);P.classList.add('on');};
+  nx.addEventListener('click',function(){if(cur===sl.length-1)close();else show(cur+1);});
+  bk.addEventListener('click',function(){show(cur-1);});
+  P.addEventListener('touchstart',function(e){tx0=e.touches[0].clientX;},{passive:true});
+  P.addEventListener('touchend',function(e){if(tx0===null)return;var dx=e.changedTouches[0].clientX-tx0;tx0=null;if(dx<-60)show(cur+1);else if(dx>60)show(cur-1);});
+  var b=document.createElement('button');b.id='presOpen';b.textContent='Presentazione';b.addEventListener('click',function(){window.openPres();});
+  var ovc=document.getElementById('ov');if(ovc&&ovc.parentNode)ovc.appendChild(b);
+  var skip=false;try{skip=localStorage.getItem('nonna_pres_off')==='1';}catch(e){}
+  if(!skip)window.openPres();
+})();
+</script></body>
 </html>
