@@ -97,7 +97,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 #pres label{display:flex;gap:8px;align-items:center;justify-content:center;font-size:14px;margin-top:10px;opacity:.9}
 #pres label input{width:20px;height:20px}
 #presOpen{position:absolute;top:8px;left:8px;z-index:5;background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:12px;padding:8px 12px;font:700 13px system-ui;cursor:pointer}
-</style>
+#splash{position:fixed;inset:0;z-index:99999;background:#1a0f08 url(img/splash.jpg) center/cover no-repeat;transition:opacity .6s}#splash.out{opacity:0;pointer-events:none}</style>
 </head>
 <body>
 <!--CORDOVA-->
@@ -1297,5 +1297,6 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
   var skip=false;try{skip=localStorage.getItem('nonna_pres_off')==='1';}catch(e){}
   if(!skip)window.openPres();
 })();
-</script></body>
+</script><div id="splash"></div><script>(function(){var s=document.getElementById('splash');function go(){s.classList.add('out');setTimeout(function(){s.remove()},700);}s.addEventListener('click',go);setTimeout(go,2600);})();</script>
+</body>
 </html>
