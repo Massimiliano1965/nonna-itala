@@ -389,8 +389,8 @@ function laneX(l){return l*0.24;}
 function stealItem(){
   var row=PANTRY[G.lv],L=G.lost[G.lv]||(G.lost[G.lv]=[]),free=[];
   row.forEach(function(it,i){if(L.indexOf(i)<0)free.push(i);});
-  if(free.length)L.push(free[Math.floor(Math.random()*free.length)]);
-  G.stolen++;addText(cx,H*0.42,'Scappato con la spesa!','#ff6b6b');beep(160,0.25,'sawtooth',0.06);
+  var pk=free.length?free[Math.floor(Math.random()*free.length)]:-1;if(pk>=0)L.push(pk);
+  G.stolen++;G.rec=(pk>=0&&G.stolen%3!==0)?{i:pk,t:3}:null;addText(cx,H*0.42,'Scappato con la spesa!','#ff6b6b');beep(160,0.25,'sawtooth',0.06);
   if(G.stolen%3===0)hurt('scippo');
 }
 function hurt(src){
@@ -451,11 +451,13 @@ function shout(txt){try{if(soundOn&&AUD[txt]){try{speechSynthesis.cancel();}catc
 function nonnaGrida(dt){G.shT=(G.shT===undefined?5:G.shT)-dt;if(G.shT<=0){if(G.thieves.some(function(t){return !t.down&&!t.dead;})){shoutR(['Fermes!','Fermes, ladèr!','Fermil!1','Fermil!2','Fermil!3','Coi sòlc!1','Coi sòlc!2']);}G.shT=8+Math.random()*5;}}
 function sicCane(){
   if(G.state!=='play'||G.dgcd>0||G.dgs!==0)return;
+  if(G.rec&&G.rec.t>0&&!G.thieves.some(function(t){return !t.down&&!t.dead&&t.z<=56&&t.fleeing;})){var Lr=G.lost[G.lv]||[],ix=Lr.indexOf(G.rec.i);if(ix>=0){Lr.splice(ix,1);G.stolen--;}G.rec=null;G.dgs=3;G.dgz=45;G.dgx=G.gx;G.dgcd=5;beep(520,0.15,'square',0.06);addText(cx,H*0.42,'Il cane ha recuperato la spesa!','#7dff9a');shout('Meno male!'+(Math.random()<0.5?1:2));return;}
   var c=G.thieves.filter(function(t){return !t.down&&t.z<=56;}).sort(function(a,b){return (b.fleeing?1:0)-(a.fleeing?1:0)||a.z-b.z;})[0];
   if(!c){beep(200,0.05,'triangle',0.03);return;}
   G.dgt=c;G.dgs=1;G.dgz=1;G.dgx=G.gx+G.dog/0.24;G.dgcd=5;beep(420,0.12,'square',0.06);addText(cx,H*0.5,'Vai, bello!','#ffd23f');shout('Ciapèl!');
 }
 function updDog(dt){
+  if(G.rec){G.rec.t-=dt;if(G.rec.t<=0)G.rec=null;}
   if(G.dgcd>0)G.dgcd=Math.max(0,G.dgcd-dt);
   if(G.dgs===1){
     var t=G.dgt;
