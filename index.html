@@ -452,7 +452,7 @@ function nonnaGrida(dt){G.shT=(G.shT===undefined?5:G.shT)-dt;if(G.shT<=0){if(G.t
 function sicCane(){
   if(G.state!=='play'||G.dgcd>0||G.dgs!==0)return;
   if(G.rec&&G.rec.t>0&&!G.thieves.some(function(t){return !t.down&&!t.dead&&t.z<=56&&t.fleeing;})){var Lr=G.lost[G.lv]||[],ix=Lr.indexOf(G.rec.i);if(ix>=0){Lr.splice(ix,1);G.stolen--;}G.rec=null;G.dgs=3;G.dgz=45;G.dgx=G.gx;G.dgcd=5;beep(520,0.15,'square',0.06);addText(cx,H*0.42,'Il cane ha recuperato la spesa!','#7dff9a');shout('Meno male!'+(Math.random()<0.5?1:2));return;}
-  var c=G.thieves.filter(function(t){return !t.down&&t.z<=56;}).sort(function(a,b){return (b.fleeing?1:0)-(a.fleeing?1:0)||a.z-b.z;})[0];
+  var c=G.thieves.filter(function(t){return !t.down&&t.z<=62;}).sort(function(a,b){return (b.fleeing?1:0)-(a.fleeing?1:0)||a.z-b.z;})[0];
   if(!c){beep(200,0.05,'triangle',0.03);return;}
   G.dgt=c;G.dgs=1;G.dgz=1;G.dgx=G.gx+G.dog/0.24;G.dgcd=5;beep(420,0.12,'square',0.06);addText(cx,H*0.5,'Vai, bello!','#ffd23f');shout('Ciapèl!');
 }
@@ -549,8 +549,8 @@ function update(dt){
     var T=TT[t.type];
     if(t.runner&&!t.fleeing&&t.z<t.fz){t.fleeing=true;addText(cx,H*0.42,'SCAPPA!','#ffd23f');beep(700,0.12,'square',0.05);}
     if(t.fleeing){
-      t.z+=(15+G.lv*2.5)*dt;t.ph+=dt*6;
-      if(t.z>54){t.dead=true;stealItem();}
+      t.z+=(10+G.lv*0.7)*dt;t.ph+=dt*6;
+      if(t.z>62){t.dead=true;stealItem();}
       return;
     }
     var vt=30-t.base+(t.burst?T.bonus*L.burst:0);
@@ -565,14 +565,14 @@ function update(dt){
     p.pz=p.z;p.z+=p.sp*dt;p.spin+=dt*22;
     var hitAny=false;
     G.thieves.slice().sort(function(x,y){return x.z-y.z;}).forEach(function(t){
-      if(t.down||p.hit.indexOf(t)>=0||Math.abs(t.lx-p.lane)>=0.6||t.z<p.pz-1||t.z>p.z+1.5)return;
+      if(t.down||p.hit.indexOf(t)>=0||Math.abs(t.lx-p.lane)>=(t.fleeing?1.0:0.6)||t.z<p.pz-1||t.z>p.z+1.5)return;
       if(hitAny&&!p.pierce)return;
       hitThief(t,WP[p.w],t.z);p.hit.push(t);hitAny=true;
     });
     if(hitAny&&!p.pierce){p.dead=true;return;}
     if(p.hit.length>=p.mx){p.dead=true;return;}
     var near=null;G.thieves.forEach(function(t){if(!t.down&&t.z>p.z&&(!near||t.z<near.z))near=t;});
-    if(near)p.lane+=(near.lx-p.lane)*Math.min(1,dt*4);
+    if(near)p.lane+=(near.lx-p.lane)*Math.min(1,dt*7);
     if(p.z>p.rng)p.dead=true;
   });
   G.proj=G.proj.filter(function(p){return !p.dead;});
