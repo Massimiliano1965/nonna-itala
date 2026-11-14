@@ -24,6 +24,7 @@ html,body{margin:0;height:100%;background:#0b0d14;color:#fff;font-family:system-
  #app{left:calc(50% - var(--gw)/2);right:auto;width:var(--gw);box-shadow:0 0 0 2px rgba(255,255,255,.18),0 0 60px rgba(0,0,0,.7)}
 }
 
+#fire{position:absolute;right:12px;bottom:14px;width:74px;height:74px;border-radius:50%;border:3px solid #fff;background:radial-gradient(circle at 35% 30%,#ff6b5b,#d41f1f 70%);box-shadow:0 4px 14px rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:0;color:#fff;font:800 9px system-ui,sans-serif;letter-spacing:.3px;touch-action:none;-webkit-tap-highlight-color:transparent}#fire:active{transform:scale(.93)}#fire span{margin-top:-1px}
 #stage{position:relative;flex:1;min-height:0}
 canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:calc(10px + env(safe-area-inset-top)) 12px 0;pointer-events:none}
@@ -156,6 +157,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 <div id="app">
   <div id="stage">
     <canvas id="c"></canvas>
+    <button id="fire" aria-label="Colpisci"><svg viewBox="0 0 48 48" width="34" height="34"><path d="M24 4l4.5 12.5L41 12l-6 11.5L44 30l-13 2-3 12-4-11-12 3 7-10.5L5 20l13 .5z" fill="#fff"/></svg><span>COLPISCI</span></button>
     <div class="hud">
       <div class="pill"><div class="lab">PUNTI</div><div id="score" class="val">0</div></div>
       <div class="mid"><div id="lvl" class="pill sm">Livello 1</div><div id="combo" class="combo"></div></div>
@@ -171,7 +173,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
     <div id="ov" class="ov">
       <div class="card">
         <h1 id="ovt">Nonna Itala<small>Acchiappaladri</small></h1>
-        <p id="ovp">La nonnina esce a fare la spesa e un ladro le ruba la borsetta con i soldi di casa. Riprendi il bilancio di famiglia in 10 livelli, dalla strada sotto casa fino al cantiere del signor Gino e alle vacanze al mare. Tre volte ti aspetta il ladro capo.<br>Scorri per cambiare corsia. Tocco veloce ovunque = colpisci con l'ultima arma; per cambiarla tocca la sua icona.<br><small style="opacity:.7">trovareparti@gmail.com</small></p>
+        <p id="ovp">La nonnina esce a fare la spesa e un ladro le ruba la borsetta con i soldi di casa. Riprendi il bilancio di famiglia in 10 livelli, dalla strada sotto casa fino al cantiere del signor Gino e alle vacanze al mare. Tre volte ti aspetta il ladro capo.<br>Scorri per cambiare corsia. Tocco veloce ovunque, o il pulsante rosso a destra = colpisci con l'ultima arma; per cambiarla tocca la sua icona.<br><small style="opacity:.7">trovareparti@gmail.com</small></p>
         <div id="wl"></div>
         <button id="cont" style="display:none"></button>
         <button id="go">Gioca</button>
@@ -312,7 +314,7 @@ function refreshCont(){
 function continueGame(){var sv=getSave();if(!sv){start();return;}G.score=sv.score||0;G.spesa=sv.spesa||0;G.lost=sv.lost||{};G.levelStartScore=G.score;beginLevel(sv.lv);}
 function start(){G.score=0;G.spesa=0;G.lost={};G.levelStartScore=0;beginLevel(window.__liv||0);}
 function beginLevel(i){(function(){var n=i+1,sd=[1,2,3,4,5,6,7,8,9,10].indexOf(n)>=0,st=document.documentElement.style;st.setProperty('--bgimg','url(img/'+(sd?'side':'lv')+n+'.jpg)');st.setProperty('--bgf',sd?'none':'blur(16px) brightness(.5) saturate(1.25)');})();
-  G.lv=i;G.sk=null;G.skT=0;G.skS=7;
+  G.lv=i;G.sk=null;G.skT=0;G.skS=(LV[i]&&LV[i].theme===5)?7:rnd(14,20);
   G.state='intro';G.hearts=3;G.levelKills=0;G.levelStartScore=G.score;G.chain=0;G.chainT=0;G.gx=0;G.gt=0;
   G.proj=[];G.thieves=[];G.obs=[];G.texts=[];G.parts=[];G.spawnT=1;G.obsT=7;G.inv=2.5;G.slow=0;G.shake=0;G.flash=0;G.swing=null;G.cd=[0,0,0,0,0,0];G.tw=null;G.gw=null;G.gwT=rnd(6,10);G.hp=null;G.hpT=rnd(11,16);G.turbo=0;G.shT=0;G.grT=5;showTw();G.winT=0;G.bossOn=false;G.stolen=0;G.lost[i]=[];G.dgs=0;G.dgz=1;G.dgcd=0;G.dgt=null;G.pw=null;G.pwT=rnd(14,24);G.pina=null;G.thSlow=0;G.gino=null;G.gcd=6;G.car=null;G.cop=null;G.ambDone=false;G.carT=rnd(6,10);
   G.purse=true;G.intro={t:i===0?0:1.4,thief:null};G.door=i===0?{z:2}:null;
@@ -429,6 +431,7 @@ function endGame(){
     overlay('La borsetta \u00e8 persa!',moodHtml('Sad')+'Borsette recuperate: <b>'+G.levelKills+'/'+LV[G.lv].goal+'</b><br>Punti: <b>'+G.score+'</b> \u00b7 Record: <b>'+G.best+'</b>','Riprova il livello',function(){G.score=G.levelStartScore;beginLevel(G.lv);});moodAnim('Sad');
   },700);
 }
+var TRK={dmg:99,kb:0,pts:60,id:'sup',snd:[330,0.08,'square']},TRM={dmg:2,kb:3,pts:80,id:'sup',snd:[330,0.08,'square']};
 function hitThief(t,wp,dz){
   dz=dz||0;
   t.hp-=wp.dmg;t.flash=0.14;t.z=Math.min(t.z+(t.type===3?wp.kb*0.4:wp.kb),86);
@@ -521,8 +524,8 @@ function update(dt){
   if(alive<maxT&&G.spawnT<=0&&G.winT<=0&&!G.bossOn){spawnThief();G.spawnT=rnd(L.spawn[0],L.spawn[1]);}
   G.pwT-=dt;if(G.pwT<=0&&!G.pw&&!G.pina&&G.winT<=0&&!G.bossOn){G.pw={lane:[-1,0,1][Math.floor(Math.random()*3)],z:72};G.pwT=rnd(24,38);}
   if(G.pw){G.pw.z-=vg*dt;if(G.pw.z<1.4&&G.pw.z>-1.5&&Math.abs(G.pw.lane-G.gx)<0.6){G.pw=null;usePina();}else if(G.pw.z<-8)G.pw=null;}
-  if(LV[G.lv].theme===5){if(G.skT>0)G.skT-=dt;G.skS-=dt;if(G.skS<=0&&!G.sk&&G.skT<=0&&G.winT<=0&&!G.bossOn){G.sk={lane:[-1,0,1][Math.floor(Math.random()*3)],z:72};G.skS=rnd(14,22);}
-    if(G.sk){G.sk.z-=vg*dt;if(G.sk.z<1.4&&G.sk.z>-1.5&&Math.abs(G.sk.lane-G.gx)<0.6){G.sk=null;G.skT=5;addText(cx,H*0.32,'Pattini TURBO!','#ffd23f');beep(660,0.1,'square',0.06);setTimeout(function(){beep(990,0.15,'square',0.06);},100);}else if(G.sk.z<-8)G.sk=null;}}
+  if(G.skT>0)G.skT-=dt;if(LV[G.lv].theme===5||G.lv>=2){G.skS-=dt;if(G.skS<=0&&!G.sk&&G.skT<=0&&G.winT<=0&&!G.bossOn){G.sk={lane:[-1,0,1][Math.floor(Math.random()*3)],z:72};G.skS=LV[G.lv].theme===5?rnd(14,22):rnd(24,36);}
+    if(G.sk){G.sk.z-=vg*dt;if(G.sk.z<1.4&&G.sk.z>-1.5&&Math.abs(G.sk.lane-G.gx)<0.6){G.sk=null;G.skT=7;G.chain=Math.max(G.chain,0);addText(cx,H*0.32,'SUPERNONNA!','#ffd23f');shout('Fermes!');beep(660,0.1,'square',0.06);setTimeout(function(){beep(990,0.15,'square',0.06);},100);}else if(G.sk.z<-8)G.sk=null;}}
   if(G.pina){G.pina.t+=dt;if(G.pina.t>2.6)G.pina=null;}
   if(G.thSlow>0)G.thSlow-=dt;
   var dtT=dt*(G.thSlow>0&&G.pina&&G.pina.t>0.9?0.2:1);
@@ -536,7 +539,7 @@ function update(dt){
   if(G.cop){var cp0=G.cop;cp0.z-=vg*dt;if(!cp0.fx&&cp0.z<36){cp0.fx=true;policeFx('Poliziotto!');}if(cp0.z<-12)G.cop=null;}
   if(G.car){var cr=G.car;cr.z-=vg*dt;var czz=cr.z+2.5;
     if(cr.z<40){cr.x+=cr.dir*2.2*dt;if((cr.police||cr.amb)&&!cr.sir){cr.sir=true;beep(880,0.18,'square',0.06);setTimeout(function(){beep(660,0.18,'square',0.06);},180);setTimeout(function(){beep(880,0.18,'square',0.06);},360);}}
-    if(!cr.hit&&!cr.police&&!cr.amb&&czz<1.6&&czz>-1.6&&Math.abs(cr.x-laneX(G.gx))<0.32&&G.inv<=0){cr.hit=true;hurt('ostacolo');}
+    if(!cr.hit&&!cr.police&&!cr.amb&&czz<1.6&&czz>-1.6&&Math.abs(cr.x-laneX(G.gx))<0.32&&G.inv<=0&&G.skT<=0){cr.hit=true;hurt('ostacolo');}
     if(cr.police&&!cr.fx&&cr.dir*cr.x>=0&&cr.z<40){cr.fx=true;policeFx('Polizia!');}
     if(cr.amb&&!cr.fx&&czz<1.5){cr.fx=true;if(G.hearts<3){G.hearts++;updHearts();addText(cx,H*0.3,'Ambulanza! +1 cuore','#7dff9a');beep(660,0.12,'square',0.07);setTimeout(function(){beep(990,0.15,'square',0.07);},120);}}
     if(cr.z<-10||(cr.dir*cr.x>2.2&&cr.z<30))G.car=null;}
@@ -562,7 +565,7 @@ function update(dt){
   {
     G.gwT-=dt;
     if(G.gwT<=0&&!G.gw&&!G.tw&&G.winT<=0&&!G.bossOn&&G.state==='play'){G.gw={z:62,lane:(Math.random()<0.65?Math.max(-1,Math.min(1,Math.round(G.gx))):[-1,0,1][Math.floor(Math.random()*3)]),w:3+Math.floor(Math.random()*3)};G.gwT=rnd(18,28);addText(cx,H*0.28,'Gino: prendi, nonna!','#ffd23f');}
-    if(G.gw){var gq=G.gw;gq.z-=vg*dt;if(gq.z<1.6&&gq.z>-1.6&&Math.abs(gq.lane-G.gx)<1.1){G.tw={w:gq.w,t:15};G.gw=null;showTw();shout('Grasie Gino!');beep(780,0.1,'triangle',0.07);addText(cx,H*0.3,WP[G.tw.w].name+' per 15 secondi!','#7dffb0');}else if(gq.z<-4)G.gw=null;}
+    if(G.gw){var gq=G.gw;gq.z-=vg*dt;if(gq.z<1.6&&gq.z>-1.6&&Math.abs(gq.lane-G.gx)<1.1){G.tw={w:gq.w,t:15};G.lastW=gq.w;G.gw=null;showTw();shout('Grasie Gino!');beep(780,0.1,'triangle',0.07);addText(cx,H*0.3,WP[G.tw.w].name+' per 15 secondi!','#7dffb0');}else if(gq.z<-4)G.gw=null;}
   }
   var dtR=dt;
   G.thieves.forEach(function(t){var dt=dtT*(t.trip>0?0.28:1);if(t.trip>0)t.trip-=dtR;
@@ -585,6 +588,7 @@ function update(dt){
     if(t.type===3){t.thr-=dt;if(t.thr<=0){t.thr=rnd(2.2,3.4);G.obs.push({lane:Math.random()<0.6?Math.round(G.gx):[-1,0,1][Math.floor(Math.random()*3)],z:Math.min(t.z,66),type:2,col:'#3d7a4f',hit:false});}}
     if(t.z>88){if(t.type===3){t.z=48;hurt('scippo');}else{t.dead=true;hurt('scippo');}}
   });
+  if(G.skT>0){G.thieves.forEach(function(t){if(t.trT>0)t.trT-=dtR;if(t.down||t.trT>0||t.z>9||Math.abs(t.lx-G.gx)>=0.95)return;t.trT=0.5;hitThief(t,t.type===3?TRM:TRK,6);});}
   G.thieves=G.thieves.filter(function(t){return !t.dead;});
   G.proj.forEach(function(p){
     p.pz=p.z;p.z+=p.sp*dt;p.spin+=dt*22;
@@ -603,7 +607,7 @@ function update(dt){
   G.proj=G.proj.filter(function(p){return !p.dead;});
   G.obs.forEach(function(o){
     o.z-=vg*dt;
-    if(!o.hit&&o.z<1.4&&o.z>-1.5&&Math.abs(o.lane-G.gx)<0.6&&G.inv<=0){o.hit=true;hurt('ostacolo');}
+    if(!o.hit&&o.z<1.4&&o.z>-1.5&&Math.abs(o.lane-G.gx)<0.6&&G.inv<=0&&G.skT<=0){o.hit=true;hurt('ostacolo');}
   });
   G.obs=G.obs.filter(function(o){return o.z>-10;});
   updFx(dt);
@@ -621,18 +625,19 @@ function updFx(dt){
 /* ---------- input ---------- */
 function moveLane(d){if(G.state!=='play')return;G.gt=Math.max(-1,Math.min(1,G.gt+d));}
 var sx=0,sy=0,sdown=false;
+$('fire').addEventListener('pointerdown',function(e){e.preventDefault();e.stopPropagation();if(G.state==='play')attack(G.lastW||0);});
 $('stage').addEventListener('pointerdown',function(e){if(e.target.closest&&e.target.closest('button,.ov'))return;sx=e.clientX;sy=e.clientY;sdown=true;});
 $('stage').addEventListener('pointermove',function(e){if(!sdown)return;var dx=e.clientX-sx;if(Math.abs(dx)>28){sdown=false;moveLane(dx>0?1:-1);}});
 $('stage').addEventListener('pointercancel',function(e){sdown=false;});
 $('stage').addEventListener('pointerup',function(e){
   if(!sdown)return;sdown=false;
-  if(G.state==='play')attack(G.tw?G.tw.w:(G.lastW||0));
+  if(G.state==='play')attack(G.lastW||0);
 });
 window.addEventListener('keydown',function(e){
   var k=e.key;
   if(k==='ArrowLeft'||k==='a')moveLane(-1);
   else if(k==='ArrowRight'||k==='d')moveLane(1);
-  else if(k==='1')attack(0);else if(k==='2')attack(1);else if(k==='3')attack(2);else if(k==='4')sicCane();else if(k===' '&&G.state==='play'){e.preventDefault();attack(G.tw?G.tw.w:(G.lastW||0));}
+  else if(k==='1')attack(0);else if(k==='2')attack(1);else if(k==='3')attack(2);else if(k==='4')sicCane();else if(k===' '&&G.state==='play'){e.preventDefault();attack(G.lastW||0);}
   else if((k==='Enter'||k===' ')&&G.state!=='play'&&!$('ov').classList.contains('hide'))(G.nextAction||start)();
 });
 
@@ -990,6 +995,7 @@ function drawGranny(x,y,k,al){
     ctx.save();ctx.translate(x,y);ctx.scale(k,k);ctx.globalAlpha=al;
     ctx.fillStyle='rgba(0,0,0,0.3)';ctx.beginPath();ctx.ellipse(0,2,26,7,0,0,7);ctx.fill();
     ctx.translate(0,bb);ctx.rotate(Math.sin(ph0)*0.03);
+    if(G.skT>0){var ag=ctx.createRadialGradient(0,-60,6,0,-60,70+Math.sin(G.t*18)*5);ag.addColorStop(0,'rgba(255,240,140,0.75)');ag.addColorStop(0.55,'rgba(255,150,30,0.4)');ag.addColorStop(1,'rgba(255,80,0,0)');ctx.fillStyle=ag;ctx.beginPath();ctx.arc(0,-60,78,0,7);ctx.fill();}
     var im0=IMG[fr];spr(fr,im0.height*UP);
     var hx,hy,th0,hold=0;
     if(sw&&!WP[wi0].thrown){var pp=sw.t/sw.dur;th0=pp<0.3?0.25+(1.3-0.25)*(pp/0.3):1.3+(-1.2-1.3)*((pp-0.3)/0.7);if(!VV&&!BB){hx=(112-78)*UP;hy=-(248-13)*UP;}}
@@ -1302,7 +1308,7 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
  <div class="sl on"><img class="big" src="img/icona.png" alt="">
   <h2 style="text-align:center">Nonna Itala<small>Acchiappaladri</small></h2>
   <p style="text-align:center">La nonnina esce a fare la spesa e un ladro le ruba la borsetta con i soldi di casa. Aiutala a riprendersi il bilancio di famiglia in 10 livelli, dalla strada sotto casa fino alle vacanze al mare.</p>
-  <p style="text-align:center;opacity:.8;font-size:14px">Scorri a destra e sinistra per cambiare corsia. Tocco veloce ovunque = colpisci con l'ultima arma; per cambiarla tocca la sua icona. Sul computer il gioco sta in una colonna, con lo sfondo del livello ai lati.</p></div>
+  <p style="text-align:center;opacity:.8;font-size:14px">Scorri a destra e sinistra per cambiare corsia. Tocco veloce ovunque, o il pulsante rosso a destra = colpisci con l'ultima arma; per cambiarla tocca la sua icona. Sul computer il gioco sta in una colonna, con lo sfondo del livello ai lati.</p></div>
  <div class="sl"><h2>Le armi<small>della nonnina</small></h2>
   <div class="row"><svg viewBox="0 0 48 48"><use href="#i-pan"/></svg><div><b>Pentola</b><span>Corpo a corpo: botta in testa fortissima, ma lenta.</span></div></div>
   <div class="row"><svg viewBox="0 0 48 48"><use href="#i-slipper"/></svg><div><b>Ciabatta</b><span>Si lancia: rapidissima, ma debole. Più il colpo è lontano, più vale.</span></div></div>
@@ -1323,7 +1329,7 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
   <div class="row"><img src="img/ca1.png" alt=""><div><b>Macchine agli incroci</b><span>Se ti prendono perdi un cuore e dici "Pòta!". Cambia corsia in tempo.</span></div></div>
   <div class="row"><img src="img/capol.png" alt=""><div><b>Polizia</b><span>Quando passa la volante o il poliziotto, ogni ladro perde il 75% di forza.</span></div></div>
   <div class="row"><img src="img/amb.png" alt=""><div><b>Ambulanza</b><span>Se hai perso un cuore, ti ridà un cuore.</span></div></div>
-  <div class="row"><img src="img/pattini.png" alt="" style="width:84px;height:auto;flex:none"><div><b>Pattini turbo</b><span>Sulla salita: raccoglili e vola per 5 secondi, coi piedi in fiamme!</span></div></div>
+  <div class="row"><img src="img/pattini.png" alt="" style="width:84px;height:auto;flex:none"><div><b>Supernonna</b><span>Raccogli i pattini: 7 secondi coi piedi in fiamme, nessun danno dagli ostacoli e travolgi i ladri!</span></div></div>
   <div class="row"><svg viewBox="0 0 48 48"><use href="#i-heart"/></svg><div><b>Tre cuori</b><span>Ogni scippo o urto ne toglie uno. Schermo rosso e vibrazione: il ladro è scappato! Premi subito il cane per recuperare la borsa.</span></div></div>
   </div>
  <div class="sl"><h2>10 livelli<small>da sotto casa alle vacanze</small></h2>
@@ -1354,7 +1360,7 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
   if(!skip)window.openPres();
 })();
 </script><svg width="0" height="0" style="position:absolute"><filter id="spr"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter></svg><div id="splash"><div class="w"><div class="t">Acchiappaladri</div></div></div><script>(function(){var s=document.getElementById('splash');function go(){s.classList.add('out');setTimeout(function(){s.remove()},700);}s.addEventListener('click',go);setTimeout(go,2600);})();</script>
-<div id="upd"><span>Nuova versione disponibile!</span><button id="updGo">Aggiorna</button><button class="x" id="updX">&times;</button></div><script>(function(){var VER=2026111411,u=document.getElementById('upd'),url='';
+<div id="upd"><span>Nuova versione disponibile!</span><button id="updGo">Aggiorna</button><button class="x" id="updX">&times;</button></div><script>(function(){var VER=2026111412,u=document.getElementById('upd'),url='';
 document.getElementById('updX').addEventListener('click',function(){u.classList.remove('on');});
 document.getElementById('updGo').addEventListener('click',function(){try{window.open(url,'_system');}catch(e){location.href=url;}u.classList.remove('on');});
 if(!window.cordova)return;
