@@ -577,7 +577,7 @@ function update(dt){
     var T=TT[t.type];
     if(t.runner&&!t.fleeing&&t.z<t.fz){t.fleeing=true;addText(cx,H*0.42,'SCAPPA!','#ffd23f');beep(700,0.12,'square',0.05);}
     if(t.fleeing){
-      t.z+=(7+G.lv*0.4)*dt*(G.turbo>0?0.5:1);t.ph+=dt*6;
+      t.z+=(7+G.lv*0.4)*dt*(G.turbo>0?0.5:1);t.ph+=dt*6;if(G.skT>0)t.z-=24*dt;
       if(t.z>62){t.dead=true;stealItem();}
       return;
     }
@@ -588,7 +588,7 @@ function update(dt){
     if(t.type===3){t.thr-=dt;if(t.thr<=0){t.thr=rnd(2.2,3.4);G.obs.push({lane:Math.random()<0.6?Math.round(G.gx):[-1,0,1][Math.floor(Math.random()*3)],z:Math.min(t.z,66),type:2,col:'#3d7a4f',hit:false});}}
     if(t.z>88){if(t.type===3){t.z=48;hurt('scippo');}else{t.dead=true;hurt('scippo');}}
   });
-  if(G.skT>0){G.thieves.forEach(function(t){if(t.trT>0)t.trT-=dtR;if(t.down||t.trT>0||t.z>9||Math.abs(t.lx-G.gx)>=0.95)return;t.trT=0.5;hitThief(t,t.type===3?TRM:TRK,6);});}
+  if(G.skT>0){G.thieves.forEach(function(t){if(t.trT>0)t.trT-=dtR;if(t.down||t.trT>0||t.z>9||Math.abs(t.lx-G.gx)>=1.7)return;t.trT=0.5;hitThief(t,t.type===3?TRM:TRK,6);});}
   G.thieves=G.thieves.filter(function(t){return !t.dead;});
   G.proj.forEach(function(p){
     p.pz=p.z;p.z+=p.sp*dt;p.spin+=dt*22;
@@ -1360,7 +1360,7 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
   if(!skip)window.openPres();
 })();
 </script><svg width="0" height="0" style="position:absolute"><filter id="spr"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter></svg><div id="splash"><div class="w"><div class="t">Acchiappaladri</div></div></div><script>(function(){var s=document.getElementById('splash');function go(){s.classList.add('out');setTimeout(function(){s.remove()},700);}s.addEventListener('click',go);setTimeout(go,2600);})();</script>
-<div id="upd"><span>Nuova versione disponibile!</span><button id="updGo">Aggiorna</button><button class="x" id="updX">&times;</button></div><script>(function(){var VER=2026111412,u=document.getElementById('upd'),url='';
+<div id="upd"><span>Nuova versione disponibile!</span><button id="updGo">Aggiorna</button><button class="x" id="updX">&times;</button></div><script>(function(){var VER=2026111413,u=document.getElementById('upd'),url='';
 document.getElementById('updX').addEventListener('click',function(){u.classList.remove('on');});
 document.getElementById('updGo').addEventListener('click',function(){try{window.open(url,'_system');}catch(e){location.href=url;}u.classList.remove('on');});
 if(!window.cordova)return;
