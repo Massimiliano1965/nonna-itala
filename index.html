@@ -456,10 +456,10 @@ function shout(txt){try{if(soundOn&&AUD[txt]){try{speechSynthesis.cancel();}catc
 function nonnaGrida(dt){G.grT=(G.grT===undefined?5:G.grT)-dt;if(G.grT<=0){if(G.thieves.some(function(t){return !t.down&&!t.dead;})){shoutR(['Fermes!','Fermes, ladèr!','Fermil!1','Fermil!2','Fermil!3','Coi sòlc!1','Coi sòlc!2']);}G.grT=8+Math.random()*5;}}
 function sicCane(){
   if(G.state!=='play'||G.dgcd>0||G.dgs!==0)return;
-  if(G.rec&&G.rec.t>0&&!G.thieves.some(function(t){return !t.down&&!t.dead&&t.z<=56&&t.fleeing;})){var Lr=G.lost[G.lv]||[],ix=Lr.indexOf(G.rec.i);if(ix>=0){Lr.splice(ix,1);G.stolen--;}G.rec=null;G.dgs=3;G.dgz=45;G.dgx=G.gx;G.dgcd=5;beep(520,0.15,'square',0.06);addText(cx,H*0.42,'Il cane ha recuperato la spesa!','#7dff9a');shout('Meno male!'+(Math.random()<0.5?1:2));return;}
+  if(G.rec&&G.rec.t>0&&!G.thieves.some(function(t){return !t.down&&!t.dead&&t.z<=56&&t.fleeing;})){var Lr=G.lost[G.lv]||[],ix=Lr.indexOf(G.rec.i);if(ix>=0){Lr.splice(ix,1);G.stolen--;}G.rec=null;G.dgs=3;G.dgz=45;G.dgx=G.gx;G.dgcd=3;beep(520,0.15,'square',0.06);addText(cx,H*0.42,'Il cane ha recuperato la spesa!','#7dff9a');shout('Meno male!'+(Math.random()<0.5?1:2));return;}
   var c=G.thieves.filter(function(t){return !t.down&&t.z<=62;}).sort(function(a,b){return (b.fleeing?1:0)-(a.fleeing?1:0)||a.z-b.z;})[0];
   if(!c){beep(200,0.05,'triangle',0.03);return;}
-  G.dgt=c;G.dgs=1;G.dgz=1;G.dgx=G.gx+G.dog/0.24;G.dgcd=5;beep(420,0.12,'square',0.06);addText(cx,H*0.5,'Vai, bello!','#ffd23f');shout('Ciapèl!');
+  G.dgt=c;G.dgs=1;G.dgz=1;G.dgx=G.gx+G.dog/0.24;G.dgcd=3;beep(420,0.12,'square',0.06);addText(cx,H*0.5,'Vai, bello!','#ffd23f');shout('Ciapèl!');
 }
 function updDog(dt){
   if(G.rec){G.rec.t-=dt;if(G.rec.t<=0)G.rec=null;}
@@ -467,7 +467,7 @@ function updDog(dt){
   if(G.dgs===1){
     var t=G.dgt;
     if(!t||t.down||t.dead){G.dgs=3;return;}
-    G.dgz+=(t.fleeing?70:50)*dt;G.dgx+=(t.lx-G.dgx)*Math.min(1,dt*9);
+    G.dgz+=(t.fleeing?95:70)*dt;G.dgx+=(t.lx-G.dgx)*Math.min(1,dt*9);
     if(G.dgz>=t.z-0.8){
       if(t.fleeing&&t.runner){t.fleeing=false;t.runner=false;}
       hitThief(t,DOGW,t.z);G.dgs=2;G.dgw=0.25;
@@ -559,7 +559,7 @@ function update(dt){
     var T=TT[t.type];
     if(t.runner&&!t.fleeing&&t.z<t.fz){t.fleeing=true;addText(cx,H*0.42,'SCAPPA!','#ffd23f');beep(700,0.12,'square',0.05);}
     if(t.fleeing){
-      t.z+=(10+G.lv*0.7)*dt*(G.turbo>0?0.5:1);t.ph+=dt*6;
+      t.z+=(7+G.lv*0.4)*dt*(G.turbo>0?0.5:1);t.ph+=dt*6;
       if(t.z>62){t.dead=true;stealItem();}
       return;
     }
@@ -1320,7 +1320,7 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
   if(!skip)window.openPres();
 })();
 </script><svg width="0" height="0" style="position:absolute"><filter id="spr"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter></svg><div id="splash"><div class="w"><div class="t">Acchiappaladri</div></div></div><script>(function(){var s=document.getElementById('splash');function go(){s.classList.add('out');setTimeout(function(){s.remove()},700);}s.addEventListener('click',go);setTimeout(go,2600);})();</script>
-<div id="upd"><span>Nuova versione disponibile!</span><button id="updGo">Aggiorna</button><button class="x" id="updX">&times;</button></div><script>(function(){var VER=2026111407,u=document.getElementById('upd'),url='';
+<div id="upd"><span>Nuova versione disponibile!</span><button id="updGo">Aggiorna</button><button class="x" id="updX">&times;</button></div><script>(function(){var VER=2026111408,u=document.getElementById('upd'),url='';
 document.getElementById('updX').addEventListener('click',function(){u.classList.remove('on');});
 document.getElementById('updGo').addEventListener('click',function(){try{window.open(url,'_system');}catch(e){location.href=url;}u.classList.remove('on');});
 if(!window.cordova)return;
