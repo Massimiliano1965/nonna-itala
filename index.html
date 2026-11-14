@@ -15,6 +15,15 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;touch-action:none}
 html,body{margin:0;height:100%;background:#0b0d14;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
 #app{position:fixed;inset:0;display:flex;flex-direction:column}
+:root{--bgimg:url(img/side1.jpg);--bgf:none}
+@media (min-width:760px) and (min-aspect-ratio:1/1){
+ :root{--gw:min(54vh,520px)}
+ body::before{content:"";position:fixed;inset:-30px;z-index:-1;background:var(--bgimg) center/cover;filter:var(--bgf)}
+ html{background:#0b0d14}body{background:transparent}
+ #pres{left:calc(50% - var(--gw)/2);right:auto;width:var(--gw)}
+ #app{left:calc(50% - var(--gw)/2);right:auto;width:var(--gw);box-shadow:0 0 0 2px rgba(255,255,255,.18),0 0 60px rgba(0,0,0,.7)}
+}
+
 #stage{position:relative;flex:1;min-height:0}
 canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;padding:calc(10px + env(safe-area-inset-top)) 12px 0;pointer-events:none}
@@ -302,7 +311,7 @@ function refreshCont(){
 }
 function continueGame(){var sv=getSave();if(!sv){start();return;}G.score=sv.score||0;G.spesa=sv.spesa||0;G.lost=sv.lost||{};G.levelStartScore=G.score;beginLevel(sv.lv);}
 function start(){G.score=0;G.spesa=0;G.lost={};G.levelStartScore=0;beginLevel(window.__liv||0);}
-function beginLevel(i){
+function beginLevel(i){(function(){var n=i+1,sd=[1,2,3,4,5,6,7,8,9,10].indexOf(n)>=0,st=document.documentElement.style;st.setProperty('--bgimg','url(img/'+(sd?'side':'lv')+n+'.jpg)');st.setProperty('--bgf',sd?'none':'blur(16px) brightness(.5) saturate(1.25)');})();
   G.lv=i;G.sk=null;G.skT=0;G.skS=7;
   G.state='intro';G.hearts=3;G.levelKills=0;G.levelStartScore=G.score;G.chain=0;G.chainT=0;G.gx=0;G.gt=0;
   G.proj=[];G.thieves=[];G.obs=[];G.texts=[];G.parts=[];G.spawnT=1;G.obsT=7;G.inv=2.5;G.slow=0;G.shake=0;G.flash=0;G.swing=null;G.cd=[0,0,0,0,0,0];G.tw=null;G.gw=null;G.gwT=rnd(6,10);G.hp=null;G.hpT=rnd(11,16);G.turbo=0;G.shT=0;G.grT=5;showTw();G.winT=0;G.bossOn=false;G.stolen=0;G.lost[i]=[];G.dgs=0;G.dgz=1;G.dgcd=0;G.dgt=null;G.pw=null;G.pwT=rnd(14,24);G.pina=null;G.thSlow=0;G.gino=null;G.gcd=6;G.car=null;G.cop=null;G.ambDone=false;G.carT=rnd(6,10);
@@ -1293,7 +1302,7 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
  <div class="sl on"><img class="big" src="img/icona.png" alt="">
   <h2 style="text-align:center">Nonna Itala<small>Acchiappaladri</small></h2>
   <p style="text-align:center">La nonnina esce a fare la spesa e un ladro le ruba la borsetta con i soldi di casa. Aiutala a riprendersi il bilancio di famiglia in 10 livelli, dalla strada sotto casa fino alle vacanze al mare.</p>
-  <p style="text-align:center;opacity:.8;font-size:14px">Scorri a destra e sinistra per cambiare corsia. Tocco veloce ovunque = colpisci con l'ultima arma; per cambiarla tocca la sua icona.</p></div>
+  <p style="text-align:center;opacity:.8;font-size:14px">Scorri a destra e sinistra per cambiare corsia. Tocco veloce ovunque = colpisci con l'ultima arma; per cambiarla tocca la sua icona. Sul computer il gioco sta in una colonna, con lo sfondo del livello ai lati.</p></div>
  <div class="sl"><h2>Le armi<small>della nonnina</small></h2>
   <div class="row"><svg viewBox="0 0 48 48"><use href="#i-pan"/></svg><div><b>Pentola</b><span>Corpo a corpo: botta in testa fortissima, ma lenta.</span></div></div>
   <div class="row"><svg viewBox="0 0 48 48"><use href="#i-slipper"/></svg><div><b>Ciabatta</b><span>Si lancia: rapidissima, ma debole. Più il colpo è lontano, più vale.</span></div></div>
@@ -1345,7 +1354,7 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
   if(!skip)window.openPres();
 })();
 </script><svg width="0" height="0" style="position:absolute"><filter id="spr"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter></svg><div id="splash"><div class="w"><div class="t">Acchiappaladri</div></div></div><script>(function(){var s=document.getElementById('splash');function go(){s.classList.add('out');setTimeout(function(){s.remove()},700);}s.addEventListener('click',go);setTimeout(go,2600);})();</script>
-<div id="upd"><span>Nuova versione disponibile!</span><button id="updGo">Aggiorna</button><button class="x" id="updX">&times;</button></div><script>(function(){var VER=2026111410,u=document.getElementById('upd'),url='';
+<div id="upd"><span>Nuova versione disponibile!</span><button id="updGo">Aggiorna</button><button class="x" id="updX">&times;</button></div><script>(function(){var VER=2026111411,u=document.getElementById('upd'),url='';
 document.getElementById('updX').addEventListener('click',function(){u.classList.remove('on');});
 document.getElementById('updGo').addEventListener('click',function(){try{window.open(url,'_system');}catch(e){location.href=url;}u.classList.remove('on');});
 if(!window.cordova)return;
