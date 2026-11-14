@@ -59,6 +59,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 #cont{margin-top:12px;width:100%;height:52px;border:0;border-radius:16px;background:#3d7a4f;color:#fff;font:inherit;font-size:18px;font-weight:800;box-shadow:0 4px 0 #285236}
 #cont:active{transform:translateY(2px);box-shadow:0 2px 0 #285236}
 #go{margin-top:12px;width:100%;height:56px;border:0;border-radius:16px;background:#ffd23f;color:#3a2200;font:inherit;font-size:20px;font-weight:900;box-shadow:0 4px 0 #b88a00}
+#ex{margin-top:10px;width:100%;height:46px;border:2px solid #fff6;border-radius:14px;background:transparent;color:#fff;font:inherit;font-size:17px;font-weight:800}
 #go:active{transform:translateY(2px);box-shadow:0 2px 0 #b88a00}
 #bar{display:flex;gap:8px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:#0b0d14;border-top:1px solid rgba(255,255,255,.1)}
 #bar.five .wb small{font-size:9px;white-space:nowrap}#bar.five .wb b{font-size:13px}
@@ -161,10 +162,11 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
     <div id="ov" class="ov">
       <div class="card">
         <h1 id="ovt">Nonna Itala<small>Acchiappaladri</small></h1>
-        <p id="ovp">La nonnina esce a fare la spesa e un ladro le ruba la borsetta con i soldi di casa. Riprendi il bilancio di famiglia in 10 livelli, dalla strada sotto casa fino al cantiere del signor Gino e alle vacanze al mare. Tre volte ti aspetta il ladro capo.<br>Scorri (o tocca i lati) per cambiare corsia. Tocca un'arma per colpire.<br><small style="opacity:.7">trovareparti@gmail.com</small></p>
+        <p id="ovp">La nonnina esce a fare la spesa e un ladro le ruba la borsetta con i soldi di casa. Riprendi il bilancio di famiglia in 10 livelli, dalla strada sotto casa fino al cantiere del signor Gino e alle vacanze al mare. Tre volte ti aspetta il ladro capo.<br>Scorri per cambiare corsia. Tocco veloce ovunque = colpisci con l'ultima arma; per cambiarla tocca la sua icona.<br><small style="opacity:.7">trovareparti@gmail.com</small></p>
         <div id="wl"></div>
         <button id="cont" style="display:none"></button>
         <button id="go">Gioca</button>
+        <button id="ex" style="display:none">Esci dal gioco</button>
       </div>
     </div>
   </div>
@@ -282,6 +284,7 @@ function overlay(title,html,btn,action){
   $('ovt').innerHTML=title;$('ovp').innerHTML=html;$('go').textContent=btn;G.nextAction=action;
   $('wl').style.display=(G.state==='menu')?'block':'none';
   var po=$('presOpen');if(po)po.style.display=(G.state==='menu')?'block':'none';
+  var ex=$('ex');if(ex)ex.style.display='none';
   refreshCont();
   $('ov').classList.remove('hide');
 }
@@ -367,7 +370,10 @@ function pauseGame(){
   if(G.state!=='play')return;
   G.state='pause';
   overlay('In pausa','Il gioco \u00e8 fermo.','Riprendi',function(){G.state='play';$('ov').classList.add('hide');});
+  var ex=$('ex');if(ex)ex.style.display='block';
 }
+function exitGame(){try{if(navigator.app&&navigator.app.exitApp){navigator.app.exitApp();return;}}catch(e){}try{window.close();}catch(e){}setTimeout(function(){location.href='about:blank';},300);}
+$('ex').addEventListener('click',exitGame);
 function spawnThief(){
   var L=LV[G.lv],type=L.types[Math.floor(Math.random()*L.types.length)];
   var T=TT[type],lane=[-1,0,1][Math.floor(Math.random()*3)];
@@ -491,7 +497,7 @@ function attack(i){
 }
 function update(dt){
   G.t+=dt;
-  var Lc=LV[G.lv],vg=30*(G.slow>0?0.4:1)*(G.skT>0?1.45:1)*(Lc.wave?(1+0.3*Math.sin(G.t*0.9)):(Lc.sp||1));
+  var Lc=LV[G.lv],vg=30*(G.slow>0?0.4:1)*(G.skT>0?1.6:1)*(Lc.wave?(1+0.3*Math.sin(G.t*0.9)):(Lc.sp||1));
   nonnaGrida(dt);
   G.dist+=vg*dt;G.run+=dt*(vg/30)*13;G.dogph+=dt*(vg/30)*15;
   if(G.slow>0)G.slow-=dt;if(G.inv>0)G.inv-=dt;if(G.shake>0)G.shake-=dt;if(G.flash>0)G.flash-=dt;
@@ -507,7 +513,7 @@ function update(dt){
   G.pwT-=dt;if(G.pwT<=0&&!G.pw&&!G.pina&&G.winT<=0&&!G.bossOn){G.pw={lane:[-1,0,1][Math.floor(Math.random()*3)],z:72};G.pwT=rnd(24,38);}
   if(G.pw){G.pw.z-=vg*dt;if(G.pw.z<1.4&&G.pw.z>-1.5&&Math.abs(G.pw.lane-G.gx)<0.6){G.pw=null;usePina();}else if(G.pw.z<-8)G.pw=null;}
   if(LV[G.lv].theme===5){if(G.skT>0)G.skT-=dt;G.skS-=dt;if(G.skS<=0&&!G.sk&&G.skT<=0&&G.winT<=0&&!G.bossOn){G.sk={lane:[-1,0,1][Math.floor(Math.random()*3)],z:72};G.skS=rnd(14,22);}
-    if(G.sk){G.sk.z-=vg*dt;if(G.sk.z<1.4&&G.sk.z>-1.5&&Math.abs(G.sk.lane-G.gx)<0.6){G.sk=null;G.skT=5;addText(cx,H*0.32,'Pattini a rotelle!','#ffd23f');beep(660,0.1,'square',0.06);setTimeout(function(){beep(990,0.15,'square',0.06);},100);}else if(G.sk.z<-8)G.sk=null;}}
+    if(G.sk){G.sk.z-=vg*dt;if(G.sk.z<1.4&&G.sk.z>-1.5&&Math.abs(G.sk.lane-G.gx)<0.6){G.sk=null;G.skT=5;addText(cx,H*0.32,'Pattini TURBO!','#ffd23f');beep(660,0.1,'square',0.06);setTimeout(function(){beep(990,0.15,'square',0.06);},100);}else if(G.sk.z<-8)G.sk=null;}}
   if(G.pina){G.pina.t+=dt;if(G.pina.t>2.6)G.pina=null;}
   if(G.thSlow>0)G.thSlow-=dt;
   var dtT=dt*(G.thSlow>0&&G.pina&&G.pina.t>0.9?0.2:1);
@@ -611,13 +617,13 @@ $('stage').addEventListener('pointermove',function(e){if(!sdown)return;var dx=e.
 $('stage').addEventListener('pointercancel',function(e){sdown=false;});
 $('stage').addEventListener('pointerup',function(e){
   if(!sdown)return;sdown=false;
-  var r=cv.getBoundingClientRect();moveLane(e.clientX<r.left+r.width/2?-1:1);
+  if(G.state==='play')attack(G.tw?G.tw.w:(G.lastW||0));
 });
 window.addEventListener('keydown',function(e){
   var k=e.key;
   if(k==='ArrowLeft'||k==='a')moveLane(-1);
   else if(k==='ArrowRight'||k==='d')moveLane(1);
-  else if(k==='1')attack(0);else if(k==='2')attack(1);else if(k==='3')attack(2);else if(k==='4')sicCane();
+  else if(k==='1')attack(0);else if(k==='2')attack(1);else if(k==='3')attack(2);else if(k==='4')sicCane();else if(k===' '&&G.state==='play'){e.preventDefault();attack(G.tw?G.tw.w:(G.lastW||0));}
   else if((k==='Enter'||k===' ')&&G.state!=='play'&&!$('ov').classList.contains('hide'))(G.nextAction||start)();
 });
 
@@ -687,11 +693,26 @@ var BCOL=['#e8c9a0','#d98d6c','#e5d89a','#a9c4a3','#d6a0a8','#c9b3d9'];
 var CARCOL=['#c0392b','#2e6fb5','#e0e0e0','#2f2f33','#d4a017'];
 var FRUIT=['#f08a24','#d93636','#f2d03b','#7cc04a'];
 var AWN=['#d94a3a','#2e8b57','#2e6fb5','#e0a526'];
+function twall(xo,za,zb,z0,kk,hb,im){
+  var Lt=im.width/im.height*hb*TK,z=za,step,zn,a,b,c,d2,x0,x1,u0,u1,sx,sw,tp,bt;
+  while(z<zb-0.001){
+    step=Math.max(0.3,0.35+z*0.06);zn=Math.min(zb,z+step);
+    a=P(xo,z,0);b=P(xo,z,hb);c=P(xo,zn,0);d2=P(xo,zn,hb);
+    x0=a[0];x1=c[0];
+    u0=(((kk*22+(z-z0))/Lt)%1+1)%1;sw=im.width*(zn-z)/Lt;sx=u0*im.width;
+    if(sx+sw>im.width)sw=im.width-sx;
+    if(sw>0.5){tp=(b[1]+d2[1])/2;bt=(a[1]+c[1])/2;ctx.drawImage(im,sx,0,sw,im.height,Math.min(x0,x1),tp,Math.abs(x1-x0)+1,bt-tp);}
+    z=zn;
+  }
+}
+var TK=7;
 function facade(xo,seed,shops,minH){
   var d=G.dist,kk0=Math.floor(d/22),k,kk,z0,zb,za,hb,col,fl,w,h1,wz,s2;
   for(k=8;k>=0;k--){
     kk=kk0+k;z0=kk*22-d;zb=z0+22;za=Math.max(z0,ZMIN);
     hb=minH+hsh(kk+seed)*0.9;col=BCOL[Math.floor(hsh(kk+seed+3)*BCOL.length)];
+    var ft=shops?IMG.fac2:IMG['fac'+Math.floor(hsh(kk+seed+7)*3.99)];
+    if(ft){wall(xo,za,zb,0,hb,col);twall(xo,za,zb,z0,kk,hb,ft);continue;}
     wall(xo,za,zb,0,hb,col);
     wall(xo,za,zb,hb-0.06,hb,'rgba(0,0,0,0.18)');
     for(fl=0;fl<4;fl++){
@@ -705,10 +726,10 @@ function facade(xo,seed,shops,minH){
     }
   }
 }
-var IMG={},IMGN=['nonnaSad0','nonnaSad1','nonnaExu0','nonnaExu1','hp0','hp1','hp2','ferro','battipanni','scopa','pe_swim','pe_hat','pe_kid','pe_balloon','pe_cotton','pe_gelato','pe_jog','pe_frutta','pe_spesa','pe_nonno','pe_operaio','pe_mamma','cop','amb','ca1','ca2','ca3','ca4','ca5','ca6','ca7','ca8','capol','nonnaV0Up','nonnaV0Hit','nonnaVFw','nonnaA','nonnaB','nonnaUp','nonnaFw','nonnaPA','nonnaPB','caneA','caneB','ladA0','ladB0','ladA1','ladB1','ladA2','ladB2','ladA3','ladB3','bidone','cassetta','panchina','cartello','padella','ciabatta','mattarello','borsetta','albero','lampione','bg0','bg1','bg2','bg3','bg4','bg5','bg6','chiosco','ruota','palofesta','cartpend','popcorn','palloncini','transenna','seggiolino','pina0','pina1','pina2','pina3','gino0','gino1','gino2','gino3','nonnaHA','nonnaHB','nonnaW0A','nonnaW0B','nonnaW1A','nonnaW1B','nonnaW2A','nonnaW2B','nonnaV0A','nonnaV0B','nonnaV1A','nonnaV1B','nonnaV2A','nonnaV2B','nonnaFin0','nonnaFin1','ombrellone','lettino','castello','salvagente','bg8','carriola','cono','secchio','pozza','bg7'];
+var IMG={},IMGN=['fac0','fac1','fac2','fac3','hor_city','hor_park','hor_luna','hor_sea','pattini','nonnaW4A','nonnaW4B','nonnaW4Up','nonnaW4Hit','nonnaSad0','nonnaSad1','nonnaExu0','nonnaExu1','hp0','hp1','hp2','ferro','battipanni','scopa','pe_swim','pe_hat','pe_kid','pe_balloon','pe_cotton','pe_gelato','pe_jog','pe_frutta','pe_spesa','pe_nonno','pe_operaio','pe_mamma','cop','amb','ca1','ca2','ca3','ca4','ca5','ca6','ca7','ca8','capol','nonnaV0Up','nonnaV0Hit','nonnaVFw','nonnaA','nonnaB','nonnaUp','nonnaFw','nonnaPA','nonnaPB','caneA','caneB','ladA0','ladB0','ladA1','ladB1','ladA2','ladB2','ladA3','ladB3','bidone','cassetta','panchina','cartello','padella','ciabatta','mattarello','borsetta','albero','lampione','bg0','bg1','bg2','bg3','bg4','bg5','bg6','chiosco','ruota','palofesta','cartpend','popcorn','palloncini','transenna','seggiolino','pina0','pina1','pina2','pina3','gino0','gino1','gino2','gino3','nonnaHA','nonnaHB','nonnaW0A','nonnaW0B','nonnaW1A','nonnaW1B','nonnaW2A','nonnaW2B','nonnaV0A','nonnaV0B','nonnaV1A','nonnaV1B','nonnaV2A','nonnaV2B','nonnaFin0','nonnaFin1','ombrellone','lettino','castello','salvagente','bg8','carriola','cono','secchio','pozza','bg7'];
 (function(){var n=0,tt=0,e=document;e.addEventListener('pointerdown',function(ev){var l=$('lvl');if(!l)return;var r=l.getBoundingClientRect(),m=36;if(ev.clientX<r.left-m||ev.clientX>r.right+m||ev.clientY<r.top-m||ev.clientY>r.bottom+m)return;var now=Date.now();if(now-tt>1200)n=0;tt=now;n++;beep(300+n*80,0.05,'square',0.04);if(n>=5){n=0;try{localStorage.setItem('nonna_all','1');}catch(e){}if(G.state==='play'||G.state==='pause')levelPicker();}},true);
 try{var q=/[?&]liv=(\d+)/.exec(location.search);if(q){var li=Math.max(1,Math.min(LV.length,+q[1]))-1;window.__liv=li;}}catch(x){}})();
-(function(){IMGN.forEach(function(n){var im=new Image();im.onload=function(){IMG[n]=im;};im.src='img/'+n+(/^bg[2-8]$/.test(n)?'.jpg':'.png');});})();
+(function(){IMGN.forEach(function(n){var im=new Image();im.onload=function(){IMG[n]=im;};im.src='img/'+n+(/^(bg[2-8]|fac\d|hor_\w+)$/.test(n)?'.jpg':'.png');});})();
 var CHSPR=true;
 function spr(n,h,ox,oy){var im=IMG[n];if(!im)return false;var w=h*im.width/im.height;ctx.drawImage(im,-w/2+(ox||0),-h+(oy||0),w,h);return true;}
 
@@ -818,8 +839,8 @@ function drawOutdoor(th){
   var d=G.dist,g,k,z,i,kk;
   g=ctx.createLinearGradient(0,0,0,hy);g.addColorStop(0,'#7fc2ee');g.addColorStop(1,'#e3f3fb');
   ctx.fillStyle=g;ctx.fillRect(0,0,W,hy+2);
-  var bgi=null;skyline(th);
-  if(bgi){var bw0=Math.max(W*1.25,hy*2.05*bgi.width/bgi.height),bh0=bw0*bgi.height/bgi.width;ctx.save();ctx.beginPath();ctx.rect(0,0,W,hy+1);ctx.clip();ctx.drawImage(bgi,cx-bw0/2,hy-bh0*0.5,bw0,bh0);ctx.restore();}
+  var bgi=IMG[th===3?'hor_park':(th===4||th===7?'hor_luna':(th===9?'hor_sea':(th===2?'':'hor_city')))]||null;if(!bgi)skyline(th);
+  if(bgi){var bw0=W*1.15,bh0=bw0*bgi.height/bgi.width,sy0=0,sh0=bgi.height;if(bh0>hy){sh0=bgi.height*hy/bh0;sy0=bgi.height-sh0;bh0=hy;}ctx.drawImage(bgi,0,sy0,bgi.width,sh0,cx-bw0/2,hy-bh0,bw0,bh0);}
   else{ctx.fillStyle=th===3?'#7fb57f':'#b9c9d8';
   for(i=0;i<9;i++){var bw=W*0.09,bx=cx-W*0.45+i*bw*1.05,bh=H*(0.03+hsh(i+7)*0.05);ctx.fillRect(bx,hy-bh,bw,bh+2);}}
   ctx.fillStyle=th===9?'#ecd9a6':(th===8?'#b39b74':'#8f8b86');ctx.fillRect(0,hy,W,H-hy);
@@ -930,7 +951,7 @@ function star(x,y,r,col){
 
 function drawWeapon(wi){
   var wn=['padella','ciabatta','mattarello','ferro','battipanni','scopa'][wi];
-  if(IMG[wn]){var L=[46,32,50,34,66,76][wi],im=IMG[wn];ctx.save();ctx.translate(0,-22);ctx.rotate(wi===0?Math.PI/2:(wi===3?0:-Math.PI/2));ctx.drawImage(im,-L/2,-L*im.height/im.width/2,L,L*im.height/im.width);ctx.restore();return;}
+  if(IMG[wn]){var L=[46,32,50,34,66,76][wi],im=IMG[wn];ctx.save();ctx.translate(0,-22);ctx.rotate((wi===0||wi===4)?Math.PI/2:(wi===3?0:-Math.PI/2));ctx.drawImage(im,-L/2,-L*im.height/im.width/2,L,L*im.height/im.width);ctx.restore();return;}
   if(wi===0){
     ctx.fillStyle='#2b2b30';ctx.fillRect(-2.5,-22,5,24);
     ctx.beginPath();ctx.ellipse(0,-35,15,15,0,0,7);ctx.fillStyle='#3d4049';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#15161a';ctx.stroke();
@@ -947,23 +968,26 @@ function drawWeapon(wi){
   }
 }
 
+function skFire(){var t=G.t*14,i,fx,fh,g;for(i=0;i<8;i++){fx=(i-3.5)*7+Math.sin(t+i*1.7)*2;fh=16+8*Math.sin(t*1.3+i*2.1)+4*(i%3);g=ctx.createLinearGradient(0,3,0,-fh);g.addColorStop(0,'rgba(255,240,120,0.95)');g.addColorStop(0.5,'rgba(255,140,30,0.85)');g.addColorStop(1,'rgba(220,40,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(fx-5,3);ctx.quadraticCurveTo(fx-4,-fh*0.5,fx+Math.sin(t+i)*2,-fh);ctx.quadraticCurveTo(fx+4,-fh*0.5,fx+5,3);ctx.fill();}}
 function drawGranny(x,y,k,al){
   if(CHSPR&&IMG.nonnaA&&IMG.nonnaB&&IMG.nonnaUp&&IMG.nonnaFw&&IMG.nonnaPA&&IMG.nonnaPB){
     var ph0=G.run,sw=G.swing,wi0=sw?sw.w:(G.lastW||0),UP=0.492,bb=-Math.abs(Math.cos(ph0))*3,fr;
     var VV=LV[G.lv]&&LV[G.lv].theme===9&&IMG.nonnaV0Up&&IMG.nonnaV0Hit&&IMG.nonnaVFw;
-    if(sw)fr=VV?(WP[wi0].thrown?'nonnaVFw':((sw.t/sw.dur)<0.45?'nonnaV0Up':'nonnaV0Hit')):(WP[wi0].thrown?'nonnaFw':'nonnaUp');
+    var BB=wi0===4&&!(LV[G.lv]&&LV[G.lv].theme===9)&&IMG.nonnaW4Up&&IMG.nonnaW4Hit&&IMG.nonnaW4A&&IMG.nonnaW4B;
+    if(sw)fr=VV?(WP[wi0].thrown?'nonnaVFw':((sw.t/sw.dur)<0.45?'nonnaV0Up':'nonnaV0Hit')):(BB?((sw.t/sw.dur)<0.45?'nonnaW4Up':'nonnaW4Hit'):(WP[wi0].thrown?'nonnaFw':'nonnaUp'));
     else if(!G.purse&&LV[G.lv]&&LV[G.lv].theme===9&&IMG['nonnaV'+wi0+'A']&&IMG['nonnaV'+wi0+'B'])fr='nonnaV'+wi0+(Math.sin(ph0)>0?'A':'B');
-    else if(!G.purse&&IMG['nonnaW'+wi0+'A']&&IMG['nonnaW'+wi0+'B'])fr='nonnaW'+wi0+(Math.sin(ph0)>0?'A':'B');
+    else if(!G.purse&&(wi0!==4||BB)&&IMG['nonnaW'+wi0+'A']&&IMG['nonnaW'+wi0+'B'])fr='nonnaW'+wi0+(Math.sin(ph0)>0?'A':'B');
     else fr=(G.purse?'nonnaP':'nonna')+(Math.sin(ph0)>0?'A':'B');
     ctx.save();ctx.translate(x,y);ctx.scale(k,k);ctx.globalAlpha=al;
     ctx.fillStyle='rgba(0,0,0,0.3)';ctx.beginPath();ctx.ellipse(0,2,26,7,0,0,7);ctx.fill();
     ctx.translate(0,bb);ctx.rotate(Math.sin(ph0)*0.03);
     var im0=IMG[fr];spr(fr,im0.height*UP);
     var hx,hy,th0,hold=0;
-    if(sw&&!WP[wi0].thrown){var pp=sw.t/sw.dur;th0=pp<0.3?0.25+(1.3-0.25)*(pp/0.3):1.3+(-1.2-1.3)*((pp-0.3)/0.7);if(!VV){hx=(112-78)*UP;hy=-(248-13)*UP;}}
+    if(sw&&!WP[wi0].thrown){var pp=sw.t/sw.dur;th0=pp<0.3?0.25+(1.3-0.25)*(pp/0.3):1.3+(-1.2-1.3)*((pp-0.3)/0.7);if(!VV&&!BB){hx=(112-78)*UP;hy=-(248-13)*UP;}}
     else if(!sw&&!G.purse&&(fr.indexOf('nonnaW')!==0&&fr.indexOf('nonnaV')!==0)){var pa=Math.sin(ph0)>0,hw2=im0.width/2;th0=0.22;hx=((pa?138:135)-hw2)*UP;hy=-(248-(pa?72:68))*UP;hold=1;}
-    if(hx!==undefined){ctx.save();ctx.translate(hx,hy);ctx.rotate(th0);ctx.scale(hold?0.95:0.8,hold?0.95:0.8);if(hold){ctx.translate(0,[12,14,12][wi0]||12);ctx.translate(0,-([45,38,47][wi0]||45));ctx.scale(1,-1);}drawWeapon(wi0);ctx.restore();}
+    if(hx!==undefined){ctx.save();ctx.translate(hx,hy);ctx.rotate(th0);ctx.scale(hold?0.95:0.8,hold?0.95:0.8);if(hold){ctx.translate(wi0===4?-8:0,[12,14,12][wi0]||12);ctx.translate(0,-(wi0===4?20:([45,38,47][wi0]||45)));ctx.scale(1,-1);}drawWeapon(wi0);ctx.restore();}
     if(hold&&fr.indexOf('nonnaH')===0){ctx.save();ctx.beginPath();ctx.arc(((pa?138:135)-im0.width/2)*UP,-(248-(pa?72:68))*UP,11*UP,0,7);ctx.clip();spr(fr,im0.height*UP);ctx.restore();}
+   if(G.skT>0)skFire();
    ctx.restore();return;
   }
   var ph=G.run,s1=Math.sin(ph),l1=Math.max(0,s1)*9,l2=Math.max(0,-s1)*9,bob=-Math.abs(Math.cos(ph))*2.5;
@@ -1210,7 +1234,8 @@ function render(){
       var sq=P(laneX(e.o.lane),e.z,0),sk2=sq[2]*H*0.0034,sb=Math.sin(G.t*6)*4;
       ctx.save();ctx.translate(sq[0],sq[1]);ctx.scale(sk2,sk2);
       ctx.fillStyle='rgba(255,210,63,0.35)';ctx.beginPath();ctx.arc(0,-26+sb,34,0,7);ctx.fill();
-      [-15,13].forEach(function(ox){
+      if(IMG.pattini)spr('pattini',52,0,-2+sb);
+      (IMG.pattini?[]:[-15,13]).forEach(function(ox){
         ctx.fillStyle='#e0457b';ctx.beginPath();ctx.moveTo(ox-9,-44+sb);ctx.lineTo(ox+3,-44+sb);ctx.lineTo(ox+3,-30+sb);ctx.lineTo(ox+13,-26+sb);ctx.lineTo(ox+13,-18+sb);ctx.lineTo(ox-9,-18+sb);ctx.closePath();ctx.fill();
         ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
         ctx.fillStyle='#fff';ctx.fillRect(ox-10,-18+sb,24,4);
@@ -1268,7 +1293,7 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
  <div class="sl on"><img class="big" src="img/icona.png" alt="">
   <h2 style="text-align:center">Nonna Itala<small>Acchiappaladri</small></h2>
   <p style="text-align:center">La nonnina esce a fare la spesa e un ladro le ruba la borsetta con i soldi di casa. Aiutala a riprendersi il bilancio di famiglia in 10 livelli, dalla strada sotto casa fino alle vacanze al mare.</p>
-  <p style="text-align:center;opacity:.8;font-size:14px">Scorri a destra e sinistra per cambiare corsia. Tocca un'arma per colpire.</p></div>
+  <p style="text-align:center;opacity:.8;font-size:14px">Scorri a destra e sinistra per cambiare corsia. Tocco veloce ovunque = colpisci con l'ultima arma; per cambiarla tocca la sua icona.</p></div>
  <div class="sl"><h2>Le armi<small>della nonnina</small></h2>
   <div class="row"><svg viewBox="0 0 48 48"><use href="#i-pan"/></svg><div><b>Pentola</b><span>Corpo a corpo: botta in testa fortissima, ma lenta.</span></div></div>
   <div class="row"><svg viewBox="0 0 48 48"><use href="#i-slipper"/></svg><div><b>Ciabatta</b><span>Si lancia: rapidissima, ma debole. Più il colpo è lontano, più vale.</span></div></div>
@@ -1289,7 +1314,7 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
   <div class="row"><img src="img/ca1.png" alt=""><div><b>Macchine agli incroci</b><span>Se ti prendono perdi un cuore e dici "Pòta!". Cambia corsia in tempo.</span></div></div>
   <div class="row"><img src="img/capol.png" alt=""><div><b>Polizia</b><span>Quando passa la volante o il poliziotto, ogni ladro perde il 75% di forza.</span></div></div>
   <div class="row"><img src="img/amb.png" alt=""><div><b>Ambulanza</b><span>Se hai perso un cuore, ti ridà un cuore.</span></div></div>
-  <div class="row"><svg viewBox="0 0 48 48"><path d="M10 10h16v18h14a4 4 0 0 1 4 4v4H10z" fill="#ffd23f" stroke="#2b1a12" stroke-width="2"/><rect x="8" y="36" width="36" height="4" fill="#2b1a12"/><circle cx="15" cy="42" r="4" fill="#ff4b4b" stroke="#2b1a12" stroke-width="2"/><circle cx="36" cy="42" r="4" fill="#ff4b4b" stroke="#2b1a12" stroke-width="2"/></svg><div><b>Pattini a rotelle</b><span>Sulla salita: raccoglili e vai veloce per 5 secondi.</span></div></div>
+  <div class="row"><img src="img/pattini.png" alt="" style="width:84px;height:auto;flex:none"><div><b>Pattini turbo</b><span>Sulla salita: raccoglili e vola per 5 secondi, coi piedi in fiamme!</span></div></div>
   <div class="row"><svg viewBox="0 0 48 48"><use href="#i-heart"/></svg><div><b>Tre cuori</b><span>Ogni scippo o urto ne toglie uno. Schermo rosso e vibrazione: il ladro è scappato! Premi subito il cane per recuperare la borsa.</span></div></div>
   </div>
  <div class="sl"><h2>10 livelli<small>dalla strada alle vacanze</small></h2>
@@ -1320,7 +1345,7 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
   if(!skip)window.openPres();
 })();
 </script><svg width="0" height="0" style="position:absolute"><filter id="spr"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter></svg><div id="splash"><div class="w"><div class="t">Acchiappaladri</div></div></div><script>(function(){var s=document.getElementById('splash');function go(){s.classList.add('out');setTimeout(function(){s.remove()},700);}s.addEventListener('click',go);setTimeout(go,2600);})();</script>
-<div id="upd"><span>Nuova versione disponibile!</span><button id="updGo">Aggiorna</button><button class="x" id="updX">&times;</button></div><script>(function(){var VER=2026111408,u=document.getElementById('upd'),url='';
+<div id="upd"><span>Nuova versione disponibile!</span><button id="updGo">Aggiorna</button><button class="x" id="updX">&times;</button></div><script>(function(){var VER=2026111409,u=document.getElementById('upd'),url='';
 document.getElementById('updX').addEventListener('click',function(){u.classList.remove('on');});
 document.getElementById('updGo').addEventListener('click',function(){try{window.open(url,'_system');}catch(e){location.href=url;}u.classList.remove('on');});
 if(!window.cordova)return;
