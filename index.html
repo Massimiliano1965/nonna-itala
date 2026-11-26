@@ -43,6 +43,12 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hearts svg.lost{opacity:.22;filter:grayscale(1)}
 #pau{pointer-events:auto;width:38px;height:34px;display:flex;align-items:center;justify-content:center;color:#fff;font:inherit}#pau svg{width:20px;height:20px}
 .lvg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0 4px}.lvb{width:31%;min-width:86px;padding:7px 4px;border-radius:10px;font-size:12px;line-height:1.15;background:rgba(255,255,255,.12);color:#fff;text-align:center}.lvb b{display:block;font-size:17px}.lvb.dn{background:#1f9d55}.lvb.cu{background:#e0a31c;color:#222}.lvb.lk{opacity:.4}
+#hard{margin-top:12px;width:100%;height:52px;border:0;border-radius:16px;background:#c4472f;color:#fff;font:inherit;font-size:18px;font-weight:800;box-shadow:0 4px 0 #7d2a1b}
+#hard:active{transform:translateY(2px);box-shadow:0 2px 0 #7d2a1b}
+.hardb{margin:8px auto 0;display:block;width:100%;height:46px;border:0;border-radius:14px;background:#c4472f;color:#fff;font:inherit;font-size:16px;font-weight:800}
+.stelle{margin-top:10px;color:#ffd23f;font-size:15px;text-align:center}
+.st{color:#ffd23f;letter-spacing:1px;white-space:nowrap}.st i{font-style:normal;color:rgba(255,255,255,.25)}
+.stbig{font-size:34px;line-height:1.1;margin:2px 0}.stw{font-size:12px;opacity:.85;margin-bottom:6px}
 #snd{pointer-events:auto;width:38px;height:34px;display:flex;align-items:center;justify-content:center;color:#fff;font:inherit}
 #snd svg{width:22px;height:22px}
 #snd .x{display:none}
@@ -177,6 +183,8 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
         <div id="wl"></div>
         <button id="cont" style="display:none"></button>
         <button id="go">Gioca</button>
+        <button id="hard" style="display:none"></button>
+        <div id="stelle" class="stelle" style="display:none"></div>
         <button id="ex" style="display:none">Esci dal gioco</button>
       </div>
     </div>
@@ -231,14 +239,28 @@ var LV=[
   {name:'In vacanza',theme:9,flee:0.5,goal:40,maxT:3,types:[1,2,2],base:8,burst:1.2,lane:0.7,obsMin:0.9,obsMax:1.6,spawn:[0.9,1.6],obs:[13,14,15,16],sp:1,boss:true}
 ];
 
+/* ---------- Nonna arrabbiata (26/11/2026): gli stessi 10 livelli, più duri. Si sblocca finendo il gioco. ---------- */
+var LVN=LV,LVA=LVN.map(function(L){var o={};for(var k in L)o[k]=L[k];
+  o.goal=Math.round(L.goal*1.3);o.flee=Math.min(0.7,(L.flee||0)+0.15);o.burst=(L.burst||0)+0.25;
+  o.spawn=[L.spawn[0]*0.8,L.spawn[1]*0.8];o.obsMin=L.obsMin*0.85;o.obsMax=L.obsMax*0.85;return o;});
+function setMode(a){G.hard=!!a;LV=G.hard?LVA:LVN;}
+function KS(k){return G.hard?k+'_a':k;}
+function hardOpen(){try{return +(localStorage.getItem('nonna_max')||0)>=LVN.length||localStorage.getItem('nonna_all')==='1';}catch(e){return false;}}
+/* ---------- Stelle (26/11/2026): 1 = livello superato, 2 = niente rubato, 3 = nessun cuore perso ---------- */
+function getStars(){try{var v=JSON.parse(localStorage.getItem('nonna_stelle')||'null');if(v&&v.n&&v.a)return v;}catch(e){}return {n:[],a:[]};}
+function starsOf(i,hard){var v=getStars();return (hard?v.a:v.n)[i]||0;}
+function putStars(i,n){var v=getStars(),r=G.hard?v.a:v.n;if(n>(r[i]||0)){r[i]=n;try{localStorage.setItem('nonna_stelle',JSON.stringify(v));}catch(e){}}}
+function starTot(){var v=getStars(),t=0;v.n.concat(v.a).forEach(function(x){t+=x||0;});return t;}
+function starStr(n){return '<span class="st">'+'\u2605'.repeat(n)+'<i>'+'\u2605'.repeat(3-n)+'</i></span>';}
+
 /* ---------- stato ---------- */
 var G={state:'menu',score:0,best:0,hearts:3,level:1,kills:0,chain:0,chainT:0,dist:0,gx:0,gt:0,
   thieves:[],obs:[],texts:[],parts:[],spawnT:1,obsT:1.5,inv:0,slow:0,shake:0,flash:0,t:0,swing:null,cd:[0,0,0,0,0,0],run:0,dog:0.13,dogph:0,dgs:0,dgz:1,dgx:0,dgt:null,dgcd:0,pw:null,pwT:18,pina:null,thSlow:0,gino:null,gcd:6,sk:null,skT:0,skS:7};
 G.bossOn=false;G.lost={};G.stolen=0;G.spesa=0;G.proj=[];G.lv=0;G.levelKills=0;G.levelStartScore=0;G.purse=false;G.door=null;G.intro=null;G.winT=0;G.nextAction=null;
 try{G.best=parseInt(localStorage.getItem('nonna_best')||'0',10)||0;}catch(e){}
 var soundOn=true;
-function getSave(){try{var v=JSON.parse(localStorage.getItem('nonna_save')||'null');return v&&v.lv>0&&v.lv<LV.length?v:null;}catch(e){return null;}}
-function putSave(o){try{if(o)localStorage.setItem('nonna_save',JSON.stringify(o));else localStorage.removeItem('nonna_save');}catch(e){}}
+function getSave(){try{var v=JSON.parse(localStorage.getItem(KS('nonna_save'))||'null');return v&&v.lv>0&&v.lv<LV.length?v:null;}catch(e){return null;}}
+function putSave(o){try{if(o)localStorage.setItem(KS('nonna_save'),JSON.stringify(o));else localStorage.removeItem(KS('nonna_save'));}catch(e){}}
 function rnd(a,b){return a+Math.random()*(b-a);}
 
 /* ---------- audio ---------- */
@@ -285,8 +307,10 @@ for(var hi=0;hi<3;hi++){heartsEl.insertAdjacentHTML('beforeend','<svg viewBox="0
 function updHearts(){var s=heartsEl.children;for(var i=0;i<3;i++){s[i].setAttribute('class',i<G.hearts?'':'lost');}}
 $('pau').addEventListener('pointerdown',function(e){e.preventDefault();pauseGame();});
 $('snd').addEventListener('pointerdown',function(e){e.preventDefault();soundOn=!soundOn;this.classList.toggle('off',!soundOn);});
-$('go').addEventListener('click',function(){(G.nextAction||start)();});
-$('cont').addEventListener('click',continueGame);
+$('go').addEventListener('click',function(){if(G.state==='menu')setMode(false);(G.nextAction||start)();});
+$('cont').addEventListener('click',function(){setMode(false);continueGame();});
+$('hard').addEventListener('click',function(){window.__hard();});
+window.__hard=function(){setMode(true);$('ov').classList.add('hide');continueGame();};
 document.addEventListener('visibilitychange',function(){if(document.hidden)pauseGame();});
 document.addEventListener('deviceready',function(){document.addEventListener('backbutton',function(e){if(e&&e.preventDefault)e.preventDefault();if(G.state==='menu'&&navigator.app&&navigator.app.exitApp){navigator.app.exitApp();return;}pauseGame();},false);},false);
 
@@ -304,10 +328,13 @@ function setTxt(id,v){if(hudC[id]!==v){hudC[id]=v;$(id).textContent=v;}}
 function updHud(){
   var L=LV[G.lv],mult=Math.min(4,1+Math.floor(G.chain/5));
   setTxt('score',String(G.score));
-  setTxt('lvl','Livello '+(G.lv+1)+' \u00b7 '+L.name);
+  setTxt('lvl',(G.hard?'Arrabbiata \u00b7 ':'')+'Livello '+(G.lv+1)+' \u00b7 '+L.name);
   setTxt('combo','Borsette '+G.levelKills+'/'+L.goal+(G.stolen?' \u00b7 Scappati '+G.stolen:'')+(G.turbo>0?' \u00b7 TURBO':'')+(G.shT>0?' \u00b7 BENEDETTA':'')+(G.bossOn?' \u00b7 LADRO CAPO':(G.chain>=5?' \u00b7 Combo x'+mult:'')));
 }
 function refreshCont(){
+  var hb=$('hard'),sb=$('stelle'),m=G.state==='menu';
+  if(hb){if(m&&hardOpen()){var h0=G.hard;setMode(true);var sa=getSave();setMode(h0);hb.style.display='block';hb.textContent='Nonna arrabbiata'+(sa?' \u00b7 Livello '+(sa.lv+1):'');}else hb.style.display='none';}
+  if(sb){var t=starTot();sb.style.display=m&&t>0?'block':'none';sb.innerHTML='\u2605 Stelle: <b>'+t+'</b> / '+(hardOpen()?60:30);}
   var sv=getSave(),c=$('cont');
   if(sv&&G.state==='menu'){c.style.display='block';c.textContent='Continua: Livello '+(sv.lv+1)+' \u00b7 '+LV[sv.lv].name;}else c.style.display='none';
 }
@@ -362,18 +389,19 @@ function levelComplete(){
   var bonus=100*(G.lv+1)+50*G.hearts;G.score+=bonus;G.spesa+=levelEuro(G.lv);
   if(G.score>G.best){G.best=G.score;try{localStorage.setItem('nonna_best',String(G.best));}catch(e){}}
   G.state='win';beep(660,0.1,'square');setTimeout(function(){beep(990,0.2,'square');},110);
-  try{if(G.lv+1>maxLv())localStorage.setItem('nonna_max',String(G.lv+1));}catch(e){}
+  try{if(G.lv+1>maxLv())localStorage.setItem(KS('nonna_max'),String(G.lv+1));}catch(e){}
   var sv0=getSave();if(G.lv>=LV.length-1)putSave(null);else if(!sv0||G.lv+1>sv0.lv)putSave({lv:G.lv+1,score:G.score,spesa:G.spesa,lost:G.lost});
-  var sto=levelStolen(G.lv),b='Recuperato: <b>'+eur(levelEuro(G.lv))+'</b>'+(sto>0?' \u00b7 Rubato: <b style="color:#ff8a8a">'+eur(sto)+'</b>':' \u00b7 Niente rubato!')+shelfHtml(G.lv)+'Bonus punti: <b>+'+bonus+'</b><br>';
-  if(G.lv>=LV.length-1){overlay('Buone vacanze!','<img id="finN" src="img/nonnaFin0.png" style="height:104px;display:block;margin:0 auto 2px">'+b+'Hai riportato a casa la spesa e il bilancio di famiglia!<br>Spesa di famiglia salvata: <b>'+eur(G.spesa)+'</b><br>Punti: <b>'+G.score+'</b> \u00b7 Record: <b>'+G.best+'</b>','Rigioca dall\'inizio',start);
+  var sto=levelStolen(G.lv),ns=1+(sto===0?1:0)+(G.hearts>=3?1:0);putStars(G.lv,ns);
+  var b='<div class="stbig">'+starStr(ns)+'</div><div class="stw">'+(sto>0?'\u2606 Niente rubato':'\u2605 Niente rubato')+' \u00b7 '+(G.hearts>=3?'\u2605 Nessun cuore perso':'\u2606 Nessun cuore perso')+'</div>'+'Recuperato: <b>'+eur(levelEuro(G.lv))+'</b>'+(sto>0?' \u00b7 Rubato: <b style="color:#ff8a8a">'+eur(sto)+'</b>':' \u00b7 Niente rubato!')+shelfHtml(G.lv)+'Bonus punti: <b>+'+bonus+'</b><br>';
+  if(G.lv>=LV.length-1){overlay('Buone vacanze!','<img id="finN" src="img/nonnaFin0.png" style="height:104px;display:block;margin:0 auto 2px">'+b+(G.hard?'Nonna arrabbiata: nessun ladro le resiste!<br>':'Hai riportato a casa la spesa e il bilancio di famiglia!<br>'+'<button class="hardb" onclick="window.__hard()">Ora prova Nonna arrabbiata</button>')+'<br>Spesa di famiglia salvata: <b>'+eur(G.spesa)+'</b><br>Punti: <b>'+G.score+'</b> \u00b7 Record: <b>'+G.best+'</b>','Rigioca dall\'inizio',start);
     (function(){var f=0,t=setInterval(function(){var e=$('finN');if(!e||$('ov').classList.contains('hide')){clearInterval(t);return;}f^=1;e.src='img/nonnaFin'+f+'.png';},650);})();}
   else{var mk=sto>0?'Sad':'Exu';overlay('Livello '+(G.lv+1)+' superato!',moodHtml(mk)+b+'Punti: <b>'+G.score+'</b><br>Prossimo livello: '+LV[G.lv+1].name+levHtml(),'Livello successivo',function(){beginLevel(G.lv+1);});moodAnim(mk);}
 }
-function maxLv(){try{return +(localStorage.getItem('nonna_max')||0);}catch(e){return 0;}}
+function maxLv(){try{return +(localStorage.getItem(KS('nonna_max'))||0);}catch(e){return 0;}}
 function allOpen(){try{return localStorage.getItem('nonna_all')==='1';}catch(e){return false;}}
 function levHtml(){var mx=maxLv(),al=allOpen(),h='<div class="lvg">';
   for(var i=0;i<LV.length;i++){var ok=al||i<=mx,cl=i<mx?'dn':(i===mx?'cu':(ok?'':'lk'));
-    h+='<div class="lvb '+cl+'"'+(ok?' onclick="window.__pick('+i+')"':'')+'><b>'+(i+1)+(i<mx?' \u2713':'')+'</b>'+LV[i].name+'</div>';}
+    h+='<div class="lvb '+cl+'"'+(ok?' onclick="window.__pick('+i+')"':'')+'><b>'+(i+1)+(i<mx?' \u2713':'')+'</b>'+LV[i].name+'<br>'+starStr(starsOf(i,G.hard))+'</div>';}
   return h+'</div>';}
 window.__pick=function(i){$('ov').classList.add('hide');G.score=0;G.spesa=0;G.lost={};G.levelStartScore=0;beginLevel(i);};
 function levelPicker(){if(G.state==='play')G.state='pause';overlay('Scegli il livello',levHtml(),'Riprendi',function(){G.state='play';$('ov').classList.add('hide');});}
@@ -393,7 +421,7 @@ function spawnThief(){
 }
 function spawnBoss(){
   var T=TT[3];G.bossOn=true;
-  G.thieves.push({type:3,hp:T.hp+(G.lv===7?10:(G.lv===9?15:0)),max:T.hp+(G.lv===7?10:(G.lv===9?15:0)),lx:0,tl:0,lt:1.5,z:50,base:T.base,age:0,bt:2,burst:false,flash:0,down:0,dead:false,ph:0,thr:2.5});
+  G.thieves.push({type:3,hp:T.hp+(G.lv===7?10:(G.lv===9?15:0))+(G.hard?8:0),max:T.hp+(G.lv===7?10:(G.lv===9?15:0))+(G.hard?8:0),lx:0,tl:0,lt:1.5,z:50,base:T.base,age:0,bt:2,burst:false,flash:0,down:0,dead:false,ph:0,thr:2.5});
   addText(cx,H*0.38,'ARRIVA IL LADRO CAPO!','#ff6b6b');beep(110,0.5,'sawtooth',0.08);G.shake=0.4;
 }
 function spawnObs(){
