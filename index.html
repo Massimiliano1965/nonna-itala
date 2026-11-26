@@ -768,7 +768,7 @@ function facade(xo,seed,shops,minH){
     }
   }
 }
-var IMG={},IMGN=['fac0','fac1','fac2','fac3','hor_city','hor_park','hor_luna','hor_sea','pattini','nonnaSad0','nonnaSad1','nonnaExu0','nonnaExu1','hp0','hp1','hp2','ferro','battipanni','scopa','pe_swim','pe_hat','pe_kid','pe_balloon','pe_cotton','pe_gelato','pe_jog','pe_frutta','pe_spesa','pe_nonno','pe_operaio','pe_mamma','cop','amb','ca1','ca2','ca3','ca4','ca5','ca6','ca7','ca8','capol','nonnaA','nonnaB','nonnaVA','nonnaVB','nonnaUp','nonnaFw','nonnaPA','nonnaPB','caneA','caneB','ladA0','ladB0','ladA1','ladB1','ladA2','ladB2','ladA3','ladB3','bidone','cassetta','panchina','cartello','padella','ciabatta','mattarello','borsetta','albero','lampione','bg0','bg1','bg2','bg3','bg4','bg5','bg6','chiosco','ruota','palofesta','cartpend','popcorn','palloncini','transenna','seggiolino','pina0','pina1','pina2','pina3','gino0','gino1','gino2','gino3','nonnaFin0','nonnaFin1','ombrellone','lettino','castello','salvagente','bg8','carriola','cono','secchio','pozza','bg7'];
+var IMG={},IMGN=['fac0','fac1','fac2','fac3','hor_city','hor_park','hor_luna','hor_sea','pattini','nonnaSad0','nonnaSad1','nonnaExu0','nonnaExu1','hp0','hp1','hp2','ferro','battipanni','scopa','pe_swim','pe_hat','pe_kid','pe_balloon','pe_cotton','pe_gelato','pe_jog','pe_frutta','pe_spesa','pe_nonno','pe_operaio','pe_mamma','cop','amb','ca1','ca2','ca3','ca4','ca5','ca6','ca7','ca8','capol','nonnaA','nonnaB','nonnaVA','nonnaVB','nonnaVUp','nonnaUp','nonnaFw','nonnaPA','nonnaPB','caneA','caneB','ladA0','ladB0','ladA1','ladB1','ladA2','ladB2','ladA3','ladB3','bidone','cassetta','panchina','cartello','padella','ciabatta','mattarello','borsetta','albero','lampione','bg0','bg1','bg2','bg3','bg4','bg5','bg6','chiosco','ruota','palofesta','cartpend','popcorn','palloncini','transenna','seggiolino','pina0','pina1','pina2','pina3','gino0','gino1','gino2','gino3','nonnaFin0','nonnaFin1','ombrellone','lettino','castello','salvagente','bg8','carriola','cono','secchio','pozza','bg7'];
 (function(){var n=0,tt=0,e=document;e.addEventListener('pointerdown',function(ev){var l=$('lvl');if(!l)return;var r=l.getBoundingClientRect(),m=36;if(ev.clientX<r.left-m||ev.clientX>r.right+m||ev.clientY<r.top-m||ev.clientY>r.bottom+m)return;var now=Date.now();if(now-tt>1200)n=0;tt=now;n++;beep(300+n*80,0.05,'square',0.04);if(n>=5){n=0;try{localStorage.setItem('nonna_all','1');}catch(e){}if(G.state==='play'||G.state==='pause')levelPicker();}},true);
 try{var q=/[?&]liv=(\d+)/.exec(location.search);if(q){var li=Math.max(1,Math.min(LV.length,+q[1]))-1;window.__liv=li;}}catch(x){}})();
 (function(){IMGN.forEach(function(n){var im=new Image();im.onload=function(){IMG[n]=im;};im.src='img/'+n+(/^(bg[2-8]|fac\d|hor_\w+)$/.test(n)?'.jpg':'.png');});})();
@@ -1012,8 +1012,8 @@ function drawWeapon(wi){
 
 function skFire(){var t=G.t*14,i,fx,fh,g;for(i=0;i<8;i++){fx=(i-3.5)*7+Math.sin(t+i*1.7)*2;fh=16+8*Math.sin(t*1.3+i*2.1)+4*(i%3);g=ctx.createLinearGradient(0,3,0,-fh);g.addColorStop(0,'rgba(255,240,120,0.95)');g.addColorStop(0.5,'rgba(255,140,30,0.85)');g.addColorStop(1,'rgba(220,40,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(fx-5,3);ctx.quadraticCurveTo(fx-4,-fh*0.5,fx+Math.sin(t+i)*2,-fh);ctx.quadraticCurveTo(fx+4,-fh*0.5,fx+5,3);ctx.fill();}}
 /* 26/11/2026: stessa nonna in tutti i disegni. Teste misurate (capelli): corsa/colpo 45 px, borsetta 52, mare 52 ma più bassa: si rimpiccioliscono quelle più grandi. */
-var GSCL={nonnaPA:0.9,nonnaPB:0.9,nonnaVA:0.95,nonnaVB:0.95};
-var HAND={nonnaA:[104,146,6],nonnaB:[104,141,6],nonnaUp:[106,9,7],nonnaVA:[177,147,9],nonnaVB:[178,147,9]};
+var GSCL={nonnaPA:0.9,nonnaPB:0.9,nonnaVA:0.95,nonnaVB:0.95,nonnaVUp:0.95};
+var HAND={nonnaA:[104,146,6],nonnaB:[104,141,6],nonnaUp:[106,9,7],nonnaVA:[177,147,9],nonnaVB:[178,147,9],nonnaVUp:[171,12,9]};
 // [img, presa x,y, punta x,y (frazioni immagine), larghezza, angolo in corsa]
 var HW=[['padella',0.06,0.82,0.55,0.45,46,1.3],['ciabatta',0.92,0.5,0.1,0.5,32,1.4],['mattarello',0.08,0.88,0.95,0.08,50,1.0],['ferro',0.5,0.1,0.5,0.75,34,Math.PI/2],['battipanni',0.03,0.42,0.85,0.45,66,-1.05],['scopa',0.2,0.42,0.95,0.45,76,-1.1],['borsetta',0.45,0.06,0.5,0.8,22,Math.PI/2]];
 function drawHeld(i,hx,hy,ang){var h=HW[i],im=IMG[h[0]];if(!im)return;var w=h[5],hh=w*im.height/im.width,ba=Math.atan2((h[4]-h[2])*hh,(h[3]-h[1])*w);
@@ -1022,7 +1022,8 @@ function drawGranny(x,y,k,al){
   if(CHSPR&&IMG.nonnaA&&IMG.nonnaB&&IMG.nonnaUp&&IMG.nonnaFw&&IMG.nonnaPA&&IMG.nonnaPB){
     var ph0=G.run,sw=G.swing,wi0=sw?sw.w:(G.lastW||0),UP=0.492,bb=-Math.abs(Math.cos(ph0))*3,fr,ab=Math.sin(ph0)>0?'A':'B';
     var sea=LV[G.lv]&&LV[G.lv].theme===9&&IMG.nonnaVA&&IMG.nonnaVB,thr=sw&&WP[wi0].thrown,hd=null,ang=0,hn=null;
-    if(sea){fr='nonnaV'+ab;hd=HAND[fr];
+    if(sea&&sw&&!thr&&IMG.nonnaVUp){fr='nonnaVUp';hd=HAND.nonnaVUp;hn=wi0;var p3=sw.t/sw.dur,t3=p3<0.3?0.25+1.05*(p3/0.3):1.3-2.5*((p3-0.3)/0.7);ang=-Math.PI/2+t3;}
+    else if(sea){fr='nonnaV'+ab;hd=HAND[fr];
       if(G.purse)hn=6;else if(sw){if(!thr){hn=wi0;var q=sw.t/sw.dur;ang=q<0.3?-1.0-0.6*(q/0.3):-1.6+2.2*((q-0.3)/0.7);}}
       else{hn=wi0;ang=HW[wi0][6];}}
     else if(sw){fr=thr?'nonnaFw':'nonnaUp';if(!thr){hd=HAND.nonnaUp;hn=wi0;var p2=sw.t/sw.dur,t2=p2<0.3?0.25+1.05*(p2/0.3):1.3-2.5*((p2-0.3)/0.7);ang=-Math.PI/2+t2;}}
