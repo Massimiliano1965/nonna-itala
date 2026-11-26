@@ -107,6 +107,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 #pres .row{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.07);border-radius:14px;padding:6px 12px;margin:6px 0}
 #pres .row img,#pres .row svg{width:84px;height:84px;object-fit:contain;flex:none}
 #pres .row b{display:block;color:#ffd23f;font-size:18px}
+#pres .row .ic{width:84px;height:84px;flex:none;display:flex;align-items:center;justify-content:center;font-size:52px;color:#ffd23f;font-weight:900}
 #pres .row span{font-size:15px;opacity:.92;line-height:1.25}
 #pres .big{display:block;margin:6px auto 14px;width:min(52vw,200px);border-radius:50%;border:5px solid #fff;box-shadow:0 8px 26px rgba(0,0,0,.45)}
 #pres .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
@@ -188,12 +189,12 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
       <div class="card">
         <h1 id="ovt">Nonna Itala<small>Acchiappaladri</small></h1>
         <p id="ovp">La nonnina esce a fare la spesa e un ladro le ruba la borsetta con i soldi di casa. Riprendi il bilancio di famiglia in 10 livelli, dalla strada sotto casa fino al cantiere del signor Gino e alle vacanze al mare. Tre volte ti aspetta il ladro capo.<br>Scorri per cambiare corsia. Tocco veloce ovunque, o il pulsante rosso a destra = colpisci con l'ultima arma; per cambiarla tocca la sua icona.<br><small style="opacity:.7">trovareparti@gmail.com</small></p>
-        <div id="wl"></div>
         <button id="cont" style="display:none"></button>
         <button id="go">Gioca</button>
         <button id="hard" style="display:none"></button>
         <button id="shop" style="display:none">La dispensa</button>
         <div id="stelle" class="stelle" style="display:none"></div>
+        <div id="wl"></div>
         <button id="ex" style="display:none">Esci dal gioco</button>
       </div>
     </div>
@@ -1423,6 +1424,11 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
    <div><img src="img/lv5.jpg" alt=""><i>5</i>Il Luna Park</div><div><img src="img/lv6.jpg" alt=""><i>6</i>La salita</div>
    <div><img src="img/lv7.jpg" alt=""><i>7</i>La discesa</div><div><img src="img/lv8.jpg" alt=""><i>8</i>Le montagne russe</div>
    <div><img src="img/lv9.jpg" alt=""><i>9</i>Il cantiere</div><div><img src="img/lv10.jpg" alt=""><i>10</i>In vacanza</div></div></div>
+ <div class="sl"><h2>Novità<small>per giocare ancora e ancora</small></h2>
+  <div class="row"><div class="ic">&#9733;</div><div><b>Tre stelle per livello</b><span>Una se lo finisci, una se non ti rubano niente, una se non perdi cuori.</span></div></div>
+  <div class="row"><img src="img/nonnaVUp.png" alt=""><div><b>Nonna arrabbiata</b><span>Finiti i 10 livelli, rigiocali più difficili: più borsette, ladri più svelti, ladro capo più forte. Altre 30 stelle!</span></div></div>
+  <div class="row"><div class="ic">&euro;</div><div><b>La dispensa</b><span>Gli euro che recuperi restano in cassa: compra padella più pesante, ciabatta che rimbalza, cane più svelto, un cuore in più.</span></div></div>
+  <div class="row"><div class="ic">&#9748;</div><div><b>Imprevisti</b><span>Saldi con borsette doppie, pioggia piena di ostacoli, banchi crollati che bloccano una corsia.</span></div></div></div>
  <div class="ft"><div class="dots"></div>
   <div class="nv"><button id="presBack">Indietro</button><button id="presNext" class="pr">Avanti</button></div>
   <label><input type="checkbox" id="presOff"> Non mostrare più all'avvio</label></div>
