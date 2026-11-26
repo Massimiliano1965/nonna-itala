@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
-<head>
+<head><style>html{background:#1a0f08}</style>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Nonna Itala Acchiappaladri</title>
@@ -124,7 +124,19 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 #pres label{display:flex;gap:8px;align-items:center;justify-content:center;font-size:14px;margin-top:10px;opacity:.9}
 #pres label input{width:20px;height:20px}
 #presOpen{position:absolute;top:8px;left:8px;z-index:5;background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:12px;padding:8px 12px;font:700 13px system-ui;cursor:pointer}
-#splash{position:fixed;inset:0;z-index:99999;background:#1a0f08;display:flex;align-items:center;justify-content:center;transition:opacity .6s}#splash .w{position:relative;width:min(100vw,calc(100vh*.5586));aspect-ratio:572/1024;background:url(img/splash.jpg) center/cover no-repeat}#splash .t{position:absolute;left:0;right:0;bottom:1.5%;text-align:center;font:900 clamp(22px,8.2vw,40px)/1 'Fredoka One','Baloo 2',system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase}#splash.out{opacity:0;pointer-events:none}#upd{position:fixed;left:12px;right:12px;top:calc(14px + env(safe-area-inset-top));z-index:2147483647;background:#1f9d55;color:#fff;border-radius:16px;padding:12px 14px;font:600 14px system-ui;display:none;align-items:center;gap:10px;box-shadow:0 6px 20px rgba(0,0,0,.5)}#upd.on{display:flex}#upd span{flex:1}#upd button{border:0;border-radius:12px;padding:10px 14px;font:800 14px system-ui;background:#ffd23f;color:#2b1a12}#upd .x{background:transparent;color:#fff;padding:6px 8px}@font-face{font-family:SP;src:url(fonts/rubik-spray-paint-latin-400-normal.woff2)}#splash .t{left:2%;right:2%;bottom:.6%;transform:rotate(-2deg);font-family:SP,Impact,sans-serif;font-weight:400;font-size:clamp(19px,7.2vw,35px);letter-spacing:.02em;text-transform:uppercase;color:#ff2fa0;text-shadow:0 0 6px #ff2fa0,0 0 14px #ff2fa099,3px 4px 0 #6e0a46;filter:url(#spr)}</style>
+#splash{position:fixed;inset:0;z-index:99999;background:#1a0f08;display:flex;align-items:center;justify-content:center;transition:opacity .6s}#splash .w{position:relative;width:min(100vw,calc(100vh*.5586));aspect-ratio:572/1024;background:url(img/splash.jpg) center/cover no-repeat}#splash .t{position:absolute;left:0;right:0;bottom:1.5%;text-align:center;font:900 clamp(22px,8.2vw,40px)/1 'Fredoka One','Baloo 2',system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase}#splash.out{opacity:0;pointer-events:none}
+/* 26/11/2026: splash animato, le armi della nonnina le girano intorno */
+#splash .w{overflow:hidden;--R:calc(min(100vw,calc(100vh*.5586))*.40);animation:spZ 3.4s ease-out both}
+@keyframes spZ{from{background-size:112%}to{background-size:100%}}
+#splash .orb{position:absolute;left:50%;top:42%;width:0;height:0;transform:scaleY(.5)}
+#splash .oi{position:absolute;left:0;top:0;animation:spO 3s linear infinite;animation-delay:calc(var(--d)*-.5s)}
+@keyframes spO{from{transform:rotate(0deg) translateX(var(--R)) rotate(0deg)}to{transform:rotate(360deg) translateX(var(--R)) rotate(-360deg)}}
+#splash .og{width:calc(var(--R)*.42);height:calc(var(--R)*.42);margin:calc(var(--R)*-.21) 0 0 calc(var(--R)*-.21);transform:scaleY(2);border-radius:50%;background:rgba(255,255,255,.92);box-shadow:0 4px 12px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;opacity:0;animation:spIn .5s .2s both}
+#splash .og svg{width:72%;height:72%;animation:spR 1.2s linear infinite}
+@keyframes spR{to{transform:rotate(360deg)}}
+@keyframes spIn{to{opacity:1}}
+#splash .mbm{position:absolute;left:0;right:0;top:1.2%;text-align:center;font:600 clamp(11px,3.1vw,14px) system-ui,sans-serif;color:#fff;text-shadow:0 1px 3px #000,0 0 8px #000;opacity:.92}
+@media (prefers-reduced-motion:reduce){#splash .w,#splash .oi,#splash .og svg{animation:none}#splash .og{opacity:1}}#upd{position:fixed;left:12px;right:12px;top:calc(14px + env(safe-area-inset-top));z-index:2147483647;background:#1f9d55;color:#fff;border-radius:16px;padding:12px 14px;font:600 14px system-ui;display:none;align-items:center;gap:10px;box-shadow:0 6px 20px rgba(0,0,0,.5)}#upd.on{display:flex}#upd span{flex:1}#upd button{border:0;border-radius:12px;padding:10px 14px;font:800 14px system-ui;background:#ffd23f;color:#2b1a12}#upd .x{background:transparent;color:#fff;padding:6px 8px}@font-face{font-family:SP;src:url(fonts/rubik-spray-paint-latin-400-normal.woff2)}#splash .t{left:2%;right:2%;bottom:.6%;transform:rotate(-2deg);font-family:SP,Impact,sans-serif;font-weight:400;font-size:clamp(19px,7.2vw,35px);letter-spacing:.02em;text-transform:uppercase;color:#ff2fa0;text-shadow:0 0 6px #ff2fa0,0 0 14px #ff2fa099,3px 4px 0 #6e0a46;filter:url(#spr)}</style>
 </head>
 <body>
 <!--CORDOVA-->
@@ -1449,7 +1461,7 @@ window.__nonna={pina:usePina,done:levelComplete,begin:beginLevel,sic:sicCane,spe
   var skip=false;try{skip=localStorage.getItem('nonna_pres_off')==='1';}catch(e){}
   if(!skip)window.openPres();
 })();
-</script><svg width="0" height="0" style="position:absolute"><filter id="spr"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter></svg><div id="splash"><div class="w"><div class="t">Acchiappaladri</div></div></div><script>(function(){var s=document.getElementById('splash');function go(){s.classList.add('out');setTimeout(function(){s.remove()},700);}s.addEventListener('click',go);setTimeout(go,2600);})();</script>
+</script><svg width="0" height="0" style="position:absolute"><filter id="spr"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter></svg><div id="splash"><div class="w"><div class="orb"><div class="oi" style="--d:0"><div class="og"><svg viewBox="0 0 48 48"><use href="#i-pan"/></svg></div></div><div class="oi" style="--d:1"><div class="og"><svg viewBox="0 0 48 48"><use href="#i-slipper"/></svg></div></div><div class="oi" style="--d:2"><div class="og"><svg viewBox="0 0 48 48"><use href="#i-pin"/></svg></div></div><div class="oi" style="--d:3"><div class="og"><svg viewBox="0 0 48 48"><use href="#i-battipanni"/></svg></div></div><div class="oi" style="--d:4"><div class="og"><svg viewBox="0 0 48 48"><use href="#i-scopa"/></svg></div></div><div class="oi" style="--d:5"><div class="og"><svg viewBox="0 0 48 48"><use href="#i-ferro"/></svg></div></div></div><div class="t">Acchiappaladri</div><div class="mbm">Made by Max · trovareparti@gmail.com</div></div></div><script>(function(){var s=document.getElementById('splash');function go(){s.classList.add('out');setTimeout(function(){s.remove()},700);}s.addEventListener('click',go);setTimeout(go,3400);})();</script>
 <div id="upd"><span>Nuova versione disponibile!</span><button id="updGo">Aggiorna</button><button class="x" id="updX">&times;</button></div><script>(function(){var VER=2026112603,u=document.getElementById('upd'),url='';
 document.getElementById('updX').addEventListener('click',function(){u.classList.remove('on');});
 document.getElementById('updGo').addEventListener('click',function(){u.classList.remove('on');if(window.cordova){location.href=url;return;}try{window.open(url,'_blank');}catch(e){location.href=url;}});
