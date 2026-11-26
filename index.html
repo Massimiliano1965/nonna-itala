@@ -1011,6 +1011,8 @@ function drawWeapon(wi){
 }
 
 function skFire(){var t=G.t*14,i,fx,fh,g;for(i=0;i<8;i++){fx=(i-3.5)*7+Math.sin(t+i*1.7)*2;fh=16+8*Math.sin(t*1.3+i*2.1)+4*(i%3);g=ctx.createLinearGradient(0,3,0,-fh);g.addColorStop(0,'rgba(255,240,120,0.95)');g.addColorStop(0.5,'rgba(255,140,30,0.85)');g.addColorStop(1,'rgba(220,40,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(fx-5,3);ctx.quadraticCurveTo(fx-4,-fh*0.5,fx+Math.sin(t+i)*2,-fh);ctx.quadraticCurveTo(fx+4,-fh*0.5,fx+5,3);ctx.fill();}}
+/* 26/11/2026: stessa nonna in tutti i disegni. Teste misurate (capelli): corsa/colpo 45 px, borsetta 52, mare 52 ma più bassa: si rimpiccioliscono quelle più grandi. */
+var GSCL={nonnaPA:0.9,nonnaPB:0.9,nonnaVA:0.95,nonnaVB:0.95};
 var HAND={nonnaA:[104,146,6],nonnaB:[104,141,6],nonnaUp:[106,9,7],nonnaVA:[177,147,9],nonnaVB:[178,147,9]};
 // [img, presa x,y, punta x,y (frazioni immagine), larghezza, angolo in corsa]
 var HW=[['padella',0.06,0.82,0.55,0.45,46,1.3],['ciabatta',0.92,0.5,0.1,0.5,32,1.4],['mattarello',0.08,0.88,0.95,0.08,50,1.0],['ferro',0.5,0.1,0.5,0.75,34,Math.PI/2],['battipanni',0.03,0.42,0.85,0.45,66,-1.05],['scopa',0.2,0.42,0.95,0.45,76,-1.1],['borsetta',0.45,0.06,0.5,0.8,22,Math.PI/2]];
@@ -1030,7 +1032,7 @@ function drawGranny(x,y,k,al){
     ctx.fillStyle='rgba(0,0,0,0.3)';ctx.beginPath();ctx.ellipse(0,2,26,7,0,0,7);ctx.fill();
     ctx.translate(0,bb);ctx.rotate(Math.sin(ph0)*0.03);
     if(G.skT>0){var ag=ctx.createRadialGradient(0,-60,6,0,-60,70+Math.sin(G.t*18)*5);ag.addColorStop(0,'rgba(255,240,140,0.75)');ag.addColorStop(0.55,'rgba(255,150,30,0.4)');ag.addColorStop(1,'rgba(255,80,0,0)');ctx.fillStyle=ag;ctx.beginPath();ctx.arc(0,-60,78,0,7);ctx.fill();}
-    var im0=IMG[fr];spr(fr,im0.height*UP);
+    var im0=IMG[fr];UP=UP*(GSCL[fr]||1);spr(fr,im0.height*UP);
     if(hd&&hn!==null){var hx=(hd[0]-im0.width/2)*UP,hy=-(im0.height-hd[1])*UP;
       drawHeld(hn,hx,hy,ang);
       ctx.save();ctx.beginPath();ctx.arc(hx,hy,hd[2]*UP,0,7);ctx.clip();spr(fr,im0.height*UP);ctx.restore();}
